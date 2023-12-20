@@ -17,3 +17,21 @@ export const SignUpApi = async (props: any): Promise<any> => {
     throw error;
   }
 };
+
+export const SignInApi = async (props: any): Promise<any> => {
+    try {
+      const response = await axios.post(`${BASE_URL}/users/sign_in`, {
+        email: props.email,
+        password: props.password
+      })
+        .then((response) => {
+          if (response.data) {
+            localStorage.setItem('user', JSON.stringify(response.data))
+          }
+          return response.data;
+        })
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  }
