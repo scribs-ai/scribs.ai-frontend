@@ -37,7 +37,7 @@ const SignUpFormSchema = z
       .email("Invalid email format."),
     password: z
       .string()
-      .min(1, "Password must be at least 6 characters.")
+      .min(1, "Password is required")
       .min(8, "Password must have 8 characters"),
     confirmPassword: z
       .string()

@@ -1,10 +1,13 @@
 import axios, { AxiosError, AxiosResponse } from "axios"
+import Cookies from "universal-cookie"
 
-const BASE_URL: string = "http://localhost:3000/"
+const cookies = new Cookies;
+
+const BASE_URL: string = 'http://13.58.78.54:3000'
 
 export const SignUpApi = async (props: any): Promise<any> => {
   try {
-    const response = await axios.post(BASE_URL + 'users', {
+    const response = await axios.post(`${BASE_URL}/users`, {
       email: props.email,
       password: props.password,
       password_confirmation: props.confirmPassword
@@ -19,7 +22,7 @@ export const SignUpApi = async (props: any): Promise<any> => {
 
 export const SignInApi = async (props: any): Promise<any> => {
   try {
-    const response = await axios.post(BASE_URL + 'users/sign_in', {
+    const response = await axios.post(`${BASE_URL}/users/sign_in`, {
       user: {
         email: props.email,
         password: props.password
@@ -27,7 +30,8 @@ export const SignInApi = async (props: any): Promise<any> => {
     })
       .then((response) => {
         if (response.data) {
-          localStorage.setItem('user', JSON.stringify(response.data))
+          cookies.set('token', response.data.token, {path:'/', httpOnly: true})
+          
         }
         return response.data;
       })
@@ -39,7 +43,7 @@ export const SignInApi = async (props: any): Promise<any> => {
 
 export const ForgotPasswordApi = async (props: any): Promise<any> => {
   try {
-    const response: AxiosResponse = await axios.post(`${BASE_URL}users/passwords/forgot`, {
+    const response: AxiosResponse = await axios.post(`${BASE_URL}/users/passwords/forgot`, {
       email: props.email
     });
 
@@ -58,3 +62,17 @@ export const ForgotPasswordApi = async (props: any): Promise<any> => {
     throw new Error('An unexpected error occurred');
   }
 };
+
+export const ResetPasswordApi = async (props: any): Promise<any> => {
+  try {
+    const response = await axios.post(`${BASE_URL}/users/passwords/reset`, {
+      token: props.token,
+      password: props.password
+    })
+    return response.data;
+
+  } catch (error) {
+    throw new Error('An error occured try again')
+  }
+
+}
