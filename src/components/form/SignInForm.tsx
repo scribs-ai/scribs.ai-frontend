@@ -55,7 +55,7 @@ const SignInForm = () => {
   const onSubmit = async (data: z.infer<typeof SignInFormSchema>) => {
     const response = await SignInApi({ ...data })
     if (response) {
-      router.push('/')
+      router.push('/dashboard')
     }
   }
 

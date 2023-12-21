@@ -1,7 +1,6 @@
 import axios from "axios"
 
-
-const BASE_URL: string = "https://9640-223-236-73-78.ngrok-free.app/"
+const BASE_URL: string = "http://localhost:3000/"
 
 export const SignUpApi = async (props: any): Promise<any> => {
   try {
@@ -21,8 +20,10 @@ export const SignUpApi = async (props: any): Promise<any> => {
 export const SignInApi = async (props: any): Promise<any> => {
     try {
       const response = await axios.post(`${BASE_URL}/users/sign_in`, {
-        email: props.email,
-        password: props.password
+        user:{
+          email: props.email,
+          password: props.password
+        }
       })
         .then((response) => {
           if (response.data) {
