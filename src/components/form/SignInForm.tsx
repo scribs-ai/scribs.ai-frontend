@@ -1,9 +1,12 @@
 "use client"
 
 import { useForm } from "react-hook-form"
+
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
+
 import Link from "next/link"
+import { useRouter } from "next/navigation";
 
 import {
   Form,
@@ -24,8 +27,10 @@ import {
 import { Icons } from "../ui/icons"
 import { Input } from "../ui/input"
 import { Button } from "../ui/button"
-import { useRouter } from "next/navigation";
+import { toast } from "../ui/use-toast";
+
 import { SignInApi } from "@/app/api/authService";
+import { FC } from "react";
 
 const SignInFormSchema = z
   .object({
@@ -39,7 +44,7 @@ const SignInFormSchema = z
       .min(8, "Password must have 8 characters"),
   })
 
-const SignInForm = () => {
+const SignInForm:FC = () => {
   const router = useRouter()
   const defaultValues = {
     email: '',
@@ -55,6 +60,9 @@ const SignInForm = () => {
   const onSubmit = async (data: z.infer<typeof SignInFormSchema>) => {
     const response = await SignInApi({ ...data })
     if (response) {
+      toast({
+        title: 'Welcome! Login Successfully'
+      })
       router.push('/dashboard')
     }
   }
@@ -108,7 +116,7 @@ const SignInForm = () => {
                   </FormControl>
                   <FormMessage />
                   <FormDescription>
-                    <Link className="text-blue-500 hover:underline" href={'/forget-password'}>forget password?</Link>
+                    <Link className="text-blue-500 hover:underline" href={'/forgot-password'}>forgot password?</Link>
                   </FormDescription>
                 </FormItem>
               )}

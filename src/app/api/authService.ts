@@ -4,7 +4,7 @@ const BASE_URL: string = "http://localhost:3000/"
 
 export const SignUpApi = async (props: any): Promise<any> => {
   try {
-    const response = await axios.post(`${BASE_URL}/users`, {
+    const response = await axios.post(BASE_URL + 'users', {
       email: props.email,
       password: props.password,
       password_confirmation: props.confirmPassword
@@ -19,7 +19,7 @@ export const SignUpApi = async (props: any): Promise<any> => {
 
 export const SignInApi = async (props: any): Promise<any> => {
     try {
-      const response = await axios.post(`${BASE_URL}/users/sign_in`, {
+      const response = await axios.post(BASE_URL+'users/sign_in', {
         user:{
           email: props.email,
           password: props.password

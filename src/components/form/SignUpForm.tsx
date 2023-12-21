@@ -1,8 +1,11 @@
 "use client"
 import { useForm } from "react-hook-form"
+
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
+
 import Link from "next/link"
+import { useRouter } from 'next/navigation'
 
 import {
   Form,
@@ -22,8 +25,10 @@ import {
 import { Input } from "../ui/input"
 import { Button } from "../ui/button"
 import { Icons } from "../ui/icons"
+import { toast } from "../ui/use-toast";
+
 import { SignUpApi } from "@/app/api/authService";
-import { useRouter } from 'next/navigation' 
+import { FC } from "react";
 
 const SignUpFormSchema = z
   .object({
@@ -43,7 +48,7 @@ const SignUpFormSchema = z
     message: 'Passwords do not match.',
   })
 
-const SignUpForm = () => {
+const SignUpForm: FC = () => {
   const router = useRouter();
   const defaultValues = {
     email: '',
@@ -60,6 +65,9 @@ const SignUpForm = () => {
   const onSubmit = async (data: z.infer<typeof SignUpFormSchema>) => {
     const response = await SignUpApi({ ...data })
     if (response) {
+      toast({
+        title: 'Sign up Successfully! Please Login'
+      })
       router.push('/sign-in')
     }
   }
