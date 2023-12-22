@@ -1,6 +1,7 @@
 "use client"
 
 import { useForm } from "react-hook-form"
+import { FC, useState } from "react";
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -29,8 +30,7 @@ import { Input } from "../ui/input"
 import { Button } from "../ui/button"
 import { toast } from "../ui/use-toast";
 
-import { SignInApi } from "@/app/api/authService";
-import { FC } from "react";
+import { signInApi } from "@/app/api/authService";
 
 const SignInFormSchema = z
   .object({
@@ -44,7 +44,8 @@ const SignInFormSchema = z
       .min(8, "Password must have 8 characters"),
   })
 
-const SignInForm:FC = () => {
+const SignInForm: FC = () => {
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const router = useRouter()
   const defaultValues = {
     email: '',
@@ -58,17 +59,35 @@ const SignInForm:FC = () => {
   })
 
   const onSubmit = async (data: z.infer<typeof SignInFormSchema>) => {
-    const response = await SignInApi({ ...data })
-    if (response) {
+    try {
+      setIsLoading(true);
+
+      const response = await signInApi({ ...data });
+
+
+      if (response) {
+        toast({
+          title: '6-digit verification code sent to your email.',
+        });
+        router.push('/twofactor-auth');
+      } else {
+        toast({
+          title: 'Sign-in failed. Please check your credentials.',
+        });
+      }
+    } catch (error: any) {
       toast({
-        title: '6-digit verification code sent to your email.'
-      })
-      router.push('/twofactor-auth')
+        title: 'An error occurred during sign-in.',
+        description: error.message || 'Unknown error',
+
+      });
     }
-  }
+    setIsLoading(false);
+  };
+
 
   return (
-    <Card>
+    <Card className="w-96">
       <CardHeader className="space-y-1">
         <CardTitle className="text-2xl">Welcome, Login</CardTitle>
         <CardDescription>
@@ -76,8 +95,12 @@ const SignInForm:FC = () => {
         </CardDescription>
       </CardHeader>
       <CardContent className="grid gap-4">
-        <Button variant="outline" className="w-full">
-          <Icons.google className="mr-2 h-4 w-4" />
+        <Button variant="outline" className="w-full" disabled={isLoading}>
+          {isLoading ? (
+            <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+          ) : (
+            <Icons.google className="mr-2 h-4 w-4" />
+          )}{" "}
           Google
         </Button>
         <div className="relative">
@@ -91,7 +114,7 @@ const SignInForm:FC = () => {
           </div>
         </div>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="w-full">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-2">
             <FormField
               control={form.control}
               name="email"
@@ -99,7 +122,7 @@ const SignInForm:FC = () => {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input placeholder="mail@example.com" {...field} />
+                    <Input placeholder="mail@example.com" disabled={isLoading} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -112,7 +135,7 @@ const SignInForm:FC = () => {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter your password" type="password" {...field} />
+                    <Input placeholder="Enter your password" type="password" disabled={isLoading} {...field} />
                   </FormControl>
                   <FormMessage />
                   <FormDescription>
@@ -121,13 +144,18 @@ const SignInForm:FC = () => {
                 </FormItem>
               )}
             />
-            <Button className="w-full mt-6" type="submit">Sign in </Button>
+            <Button className="w-full mt-6" type="submit" disabled={isLoading}>
+              {isLoading && (
+                <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+              )}
+              Sign in
+            </Button>
           </form>
         </Form>
       </CardContent>
       <CardFooter>
         <p className='text-center text-sm text-gray-600 mt-1'>
-          If you don&apos;t have an account, please.
+          If you don&apos;t have an account, please.{" "}
           <Link className="text-blue-500 hover:underline" href={'/sign-up'}>Sign up</Link>
         </p>
       </CardFooter>

@@ -35,7 +35,10 @@ export const signUpApi = async (props: {
   }
 };
 
-export const SignInApi = async (props: any): Promise<any> => {
+export const signInApi = async (props: {
+  email: string;
+  password: string;
+}): Promise<string | undefined> => {
   try {
     const signInResponse = await axios.post(`${BASE_URL}/users/sign_in`, {
       user: {
@@ -43,16 +46,36 @@ export const SignInApi = async (props: any): Promise<any> => {
         password: props.password,
       },
     });
+
     if (signInResponse.status === 200) {
       localStorage.setItem("email", props.email);
-      const otpGenerateResponse = axios.get(
+
+      const otpGenerateResponse = await axios.get(
         `${BASE_URL}/users/registrations/generate_otp`,
-        { params: { email: props.email } }
+        {
+          params: { email: props.email },
+        }
       );
+
+      if (otpGenerateResponse.status === 200) {
+        return signInResponse.data;
+      } else {
+        throw new Error("Failed to generate OTP");
+      }
     }
-    return signInResponse.data.email;
-  } catch (error) {
-    throw error;
+  } catch (error: any) {
+    if (axios.isAxiosError(error)) {
+      const axiosError = error as AxiosError;
+
+      if (axiosError.response?.status === 404) {
+        throw new Error("Email not found");
+      }
+
+      if (axiosError.response?.status === 401) {
+        throw new Error("Wrong email or password");
+      }
+    }
+    throw new Error("Sign-in failed");
   }
 };
 
