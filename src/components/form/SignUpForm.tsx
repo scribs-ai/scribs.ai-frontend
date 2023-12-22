@@ -1,11 +1,13 @@
 "use client"
 import { useForm } from "react-hook-form"
+import { FC, useState } from "react";
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 
 import Link from "next/link"
 import { useRouter } from 'next/navigation'
+
 
 import {
   Form,
@@ -27,8 +29,7 @@ import { Button } from "../ui/button"
 import { Icons } from "../ui/icons"
 import { toast } from "../ui/use-toast";
 
-import { SignUpApi } from "@/app/api/authService";
-import { FC } from "react";
+import { signUpApi } from "@/app/api/authService";
 
 const SignUpFormSchema = z
   .object({
@@ -49,6 +50,9 @@ const SignUpFormSchema = z
   })
 
 const SignUpForm: FC = () => {
+
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+
   const router = useRouter();
   const defaultValues = {
     email: '',
@@ -63,17 +67,32 @@ const SignUpForm: FC = () => {
   })
 
   const onSubmit = async (data: z.infer<typeof SignUpFormSchema>) => {
-    const response = await SignUpApi({ ...data })
-    if (response) {
+    try {
+      setIsLoading(true);
+
+      const response = await signUpApi({ ...data });
+
+      setIsLoading(false);
+
+      if (response) {
+        toast({
+          title: 'Sign up Successful! Please Login',
+        });
+        router.push('/sign-in');
+      }
+    } catch (error: any) {
+
+      setIsLoading(false);
+
       toast({
-        title: 'Sign up Successfully! Please Login'
-      })
-      router.push('/sign-in')
+        title: 'Sign up failed!',
+        description: error.message || 'An error occurred during sign up.',
+      });
     }
-  }
+  };
 
   return (
-    <Card>
+    <Card className="w-96">
       <CardHeader className="space-y-1">
         <CardTitle className="text-2xl">Create an account</CardTitle>
         <CardDescription>
@@ -81,8 +100,12 @@ const SignUpForm: FC = () => {
         </CardDescription>
       </CardHeader>
       <CardContent className="grid gap-4">
-        <Button variant="outline" className="w-full">
-          <Icons.google className="mr-2 h-4 w-4" />
+        <Button variant="outline" className="w-full" disabled={isLoading}>
+          {isLoading ? (
+            <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+          ) : (
+            <Icons.google className="mr-2 h-4 w-4" />
+          )}{" "}
           Google
         </Button>
         <div className="relative">
@@ -96,7 +119,7 @@ const SignUpForm: FC = () => {
           </div>
         </div>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="w-full">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-2">
             <FormField
               control={form.control}
               name="email"
@@ -104,7 +127,7 @@ const SignUpForm: FC = () => {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input placeholder="mail@example.com" {...field} />
+                    <Input placeholder="mail@example.com" {...field} disabled={isLoading} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -117,7 +140,7 @@ const SignUpForm: FC = () => {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter your password" type="password" {...field} />
+                    <Input placeholder="Enter your password" type="password" {...field} disabled={isLoading} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -130,20 +153,42 @@ const SignUpForm: FC = () => {
                 <FormItem >
                   <FormLabel>Confirm Password</FormLabel>
                   <FormControl>
-                    <Input placeholder="Re-enter your password" type="password" {...field} />
+                    <Input placeholder="Re-enter your password" type="password" {...field} disabled={isLoading} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <Button className="w-full mt-6" type="submit">Sign up</Button>
+            <Button className="w-full mt-6" type="submit" disabled={isLoading}>
+              {isLoading && (
+                <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+              )}
+              Sign up
+            </Button>
           </form>
         </Form>
       </CardContent>
-      <CardFooter>
+      <CardFooter className="flex flex-col space-y-2">
         <p className='text-center text-sm text-gray-600 mt-1'>
-          If you already have an account, please.
+          If you already have an account, please.{" "}
           <Link className="text-blue-500 hover:underline" href={'/sign-in'}>Sign in</Link>
+        </p>
+        <p className="px-8 text-center text-sm text-muted-foreground">
+          By clicking continue, you agree to our{" "}
+          <Link
+            href="/terms"
+            className="underline underline-offset-4 hover:text-primary"
+          >
+            Terms of Service
+          </Link>{" "}
+          and{" "}
+          <Link
+            href="/privacy"
+            className="underline underline-offset-4 hover:text-primary"
+          >
+            Privacy Policy
+          </Link>
+          .
         </p>
       </CardFooter>
     </Card>
