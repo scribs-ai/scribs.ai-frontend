@@ -29,6 +29,7 @@ import { Icons } from "../ui/icons"
 import { toast } from "../ui/use-toast";
 
 import { signUpApi } from "@/app/api/authService";
+import GoogleAuthButton from "../GoogleAuthButton";
 
 const SignUpFormSchema = z
   .object({
@@ -99,10 +100,7 @@ const SignUpForm: FC = () => {
         </CardDescription>
       </CardHeader>
       <CardContent className="grid gap-4">
-        <Button variant="outline" className="w-full" disabled={isLoading}>
-          <Icons.google className="mr-2 h-4 w-4" />
-          Google
-        </Button>
+        <GoogleAuthButton />
         <div className="relative">
           <div className="absolute inset-0 flex items-center">
             <span className="w-full border-t" />

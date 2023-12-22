@@ -180,3 +180,24 @@ export const twoFactorAuthApi = async (props: {
     throw new Error("An unexpected error occurred");
   }
 };
+
+export const googleOauthApi = async (props: {
+  access_token: string;
+}): Promise<string | undefined> => {
+  try {
+    const googleOauthResponse = await axios.post(
+      `${BASE_URL}/users/registrations/google_oauth`,
+      { access_token: `Bearer ${props.access_token}` }
+    );
+
+    if (googleOauthResponse.status === 200) {
+      cookies.set("token", googleOauthResponse.data.token, {
+        path: "/",
+        httpOnly: true,
+      });
+      return googleOauthResponse.data;
+    }
+  } catch (error: any) {
+    throw new Error("Please try again.");
+  }
+};
