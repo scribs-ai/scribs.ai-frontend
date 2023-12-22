@@ -64,7 +64,6 @@ const SignInForm: FC = () => {
 
       const response = await signInApi({ ...data });
 
-
       if (response) {
         toast({
           title: '6-digit verification code sent to your email.',
@@ -85,7 +84,6 @@ const SignInForm: FC = () => {
     setIsLoading(false);
   };
 
-
   return (
     <Card className="w-96">
       <CardHeader className="space-y-1">
@@ -96,11 +94,7 @@ const SignInForm: FC = () => {
       </CardHeader>
       <CardContent className="grid gap-4">
         <Button variant="outline" className="w-full" disabled={isLoading}>
-          {isLoading ? (
-            <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-          ) : (
-            <Icons.google className="mr-2 h-4 w-4" />
-          )}{" "}
+          <Icons.google className="mr-2 h-4 w-4" />
           Google
         </Button>
         <div className="relative">

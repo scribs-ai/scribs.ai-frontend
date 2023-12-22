@@ -1,8 +1,11 @@
 "use client"
+import { useState } from "react";
 
 import { useForm } from "react-hook-form"
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
+
+import { useRouter } from "next/navigation";
 
 import {
   Form,
@@ -20,9 +23,10 @@ import {
 } from "../ui/card"
 import { Input } from "../ui/input"
 import { Button } from "../ui/button"
-import { ResetPasswordApi } from "@/app/api/authService";
 import { toast } from "../ui/use-toast";
-import { useRouter } from "next/navigation";
+import { Icons } from "../ui/icons";
+
+import { resetPasswordApi } from "@/app/api/authService";
 
 const ResetPasswordFormSchema = z
   .object({
@@ -40,6 +44,7 @@ const ResetPasswordFormSchema = z
   })
 
 const ResetPasswordForm = (props: { token: string }) => {
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const router = useRouter();
   const defaultValues = {
     password: '',
@@ -53,18 +58,27 @@ const ResetPasswordForm = (props: { token: string }) => {
   })
 
   const onSubmit = async (data: z.infer<typeof ResetPasswordFormSchema>) => {
-    await ResetPasswordApi({ ...data, ...props })
+    setIsLoading(true)
+    await resetPasswordApi({ ...data, ...props })
       .then(() => {
         toast({
           title: 'Password changed successfully.'
         })
+        setIsLoading(false)
         router.push('/sign-in')
       })
       .catch((error) => {
-        toast({
-          title: 'An error occured, try again'
-        })
-      })
+        if (error.message === "Invalid link or link expired.") {
+          toast({
+            title: 'Invalid link or link expired, try again.',
+          });
+        } else {
+          toast({
+            title: 'Failed to reset password. Please try again.'
+          });
+        }
+        setIsLoading(false)
+      });
   }
 
   return (
@@ -85,7 +99,7 @@ const ResetPasswordForm = (props: { token: string }) => {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter your password" type="password" autoComplete="new-password" {...field} />
+                    <Input placeholder="Enter your password" type="password" autoComplete="new-password" disabled={isLoading} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -98,13 +112,18 @@ const ResetPasswordForm = (props: { token: string }) => {
                 <FormItem >
                   <FormLabel>Confirm Password</FormLabel>
                   <FormControl>
-                    <Input placeholder="Re-enter your password" type="password" autoComplete="new-password" {...field} />
+                    <Input placeholder="Re-enter your password" type="password" autoComplete="new-password" disabled={isLoading} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <Button className="w-full" type="submit">Change Password</Button>
+            <Button className="w-full" type="submit">
+              {isLoading && (
+                <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+              )}
+              Change Password
+            </Button>
           </form>
         </Form>
       </CardContent>

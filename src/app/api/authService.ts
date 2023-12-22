@@ -79,7 +79,9 @@ export const signInApi = async (props: {
   }
 };
 
-export const ForgotPasswordApi = async (props: any): Promise<any> => {
+export const forgotPasswordApi = async (props: {
+  email: string;
+}): Promise<any> => {
   try {
     const response: AxiosResponse = await axios.post(
       `${BASE_URL}/users/passwords/forgot`,
@@ -87,36 +89,55 @@ export const ForgotPasswordApi = async (props: any): Promise<any> => {
         email: props.email,
       }
     );
-
     return response.data;
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
       const axiosError = error as AxiosError;
 
       if (axiosError.response?.status === 404) {
-        throw new Error("Email not found");
+        throw new Error(
+          "Email not found. Please check the email address provided."
+        );
       }
 
-      throw new Error("Cannot reset password, please try again");
+      throw new Error(
+        "Failed to initiate password reset. Please try again later."
+      );
     }
 
     throw new Error("An unexpected error occurred");
   }
 };
 
-export const ResetPasswordApi = async (props: any): Promise<any> => {
+export const resetPasswordApi = async (props: {
+  token: string;
+  password: string;
+}): Promise<any> => {
   try {
     const response = await axios.post(`${BASE_URL}/users/passwords/reset`, {
       token: props.token,
       password: props.password,
     });
+
     return response.data;
   } catch (error) {
-    throw new Error("An error occured try again");
+    if (axios.isAxiosError(error)) {
+      const axiosError = error as AxiosError;
+
+      if (axiosError.response?.status === 404) {
+        throw new Error("Invalid link or link expired.");
+      } else {
+        throw new Error("Failed to reset password. Please try again later.");
+      }
+    }
+
+    throw new Error("An unexpected error occurred");
   }
 };
 
-export const TwoFactorAuthApi = async (props: any): Promise<any> => {
+export const twoFactorAuthApi = async (props: {
+  otp: string;
+}): Promise<any> => {
   try {
     const response = await axios.post(`${BASE_URL}/users/sessions/otp_login`, {
       email: localStorage.getItem("email"),
@@ -132,7 +153,7 @@ export const TwoFactorAuthApi = async (props: any): Promise<any> => {
       const axiosError = error as AxiosError;
 
       if (axiosError.response?.status === 401) {
-        throw new Error("Invalid OTP");
+        throw new Error("Invalid OTP. Please enter a valid OTP.");
       }
 
       throw new Error("Cannot verify OTP, please try again");

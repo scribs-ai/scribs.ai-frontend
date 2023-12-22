@@ -1,6 +1,6 @@
 "use client"
 
-import { FC } from "react";
+import { FC, useState } from "react";
 
 import { useForm } from "react-hook-form"
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -25,7 +25,8 @@ import { Input } from "../ui/input"
 import { Button } from "../ui/button"
 import { toast } from "../ui/use-toast";
 
-import { ForgotPasswordApi } from "@/app/api/authService";
+import { forgotPasswordApi } from "@/app/api/authService";
+import { Icons } from "../ui/icons";
 
 const ForgetPasswordFormSchema = z
   .object({
@@ -36,6 +37,7 @@ const ForgetPasswordFormSchema = z
   })
 
 const ForgetPasswordForm: FC = () => {
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const router = useRouter()
   const defaultValues = {
     email: ''
@@ -48,29 +50,32 @@ const ForgetPasswordForm: FC = () => {
   })
 
   const onSubmit = async (data: z.infer<typeof ForgetPasswordFormSchema>) => {
-    await ForgotPasswordApi({ ...data })
+    setIsLoading(true)
+    await forgotPasswordApi({ ...data })
       .then(() => {
         toast({
-          title: 'Verification link has been sent to your registered email address.'
-        })
-        router.push('/sign-in')
+          title: 'Verification link has been sent to your registered email address.',
+        });
+        setIsLoading(false)
+        router.push('/sign-in');
       })
       .catch((error: any) => {
-        if (error.message === 'Email not found') {
+        if (error.message === 'Email not found. Please check the email address provided.') {
           form.setError('email', {
             type: 'manual',
-            message: 'Email not found',
+            message: 'Invalid email.',
           });
         } else {
           toast({
-            title: error.message,
+            title: 'Failed to initiate password reset. Please try again later.',
           });
         }
-      })
+        setIsLoading(false)
+      });
   }
 
   return (
-    <Card>
+    <Card className="w-96">
       <CardHeader className="space-y-1">
         <CardTitle className="text-2xl">Forgot Password</CardTitle>
         <CardDescription>
@@ -87,13 +92,18 @@ const ForgetPasswordForm: FC = () => {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input placeholder="mail@example.com" {...field} />
+                    <Input placeholder="mail@example.com" disabled={isLoading} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <Button className="w-full mt-6" type="submit">Send Reset Link</Button>
+            <Button className="w-full mt-6" type="submit">
+              {isLoading && (
+                <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+              )}
+              Send Reset Link
+            </Button>
           </form>
         </Form>
       </CardContent>

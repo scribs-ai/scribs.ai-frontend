@@ -1,6 +1,6 @@
 "use client"
 
-import { FC } from "react";
+import { FC, useState } from "react";
 import { useForm } from "react-hook-form"
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -23,9 +23,9 @@ import {
 import { Input } from "../ui/input"
 import { Button } from "../ui/button"
 import { toast } from "../ui/use-toast";
+import { Icons } from "../ui/icons";
 
-import { TwoFactorAuthApi } from "@/app/api/authService";
-
+import { twoFactorAuthApi } from "@/app/api/authService";
 
 const TwoFactorAuthFormSchema = z
   .object({
@@ -36,6 +36,7 @@ const TwoFactorAuthFormSchema = z
   })
 
 const TwoFactorAuthForm: FC = () => {
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const router = useRouter()
   const defaultValues = {
     otp: ''
@@ -48,15 +49,17 @@ const TwoFactorAuthForm: FC = () => {
   })
 
   const onSubmit = async (data: z.infer<typeof TwoFactorAuthFormSchema>) => {
-    await TwoFactorAuthApi({ ...data })
+    setIsLoading(true)
+    await twoFactorAuthApi({ ...data })
       .then(() => {
         toast({
           title: 'Logged In successful, Welcome.'
         })
+        setIsLoading(false)
         router.push('/dashboard')
       })
       .catch((error: any) => {
-        if (error.message === 'Invalid OTP') {
+        if (error.message === 'Invalid OTP. Please enter a valid OTP.') {
           form.setError('otp', {
             type: 'manual',
             message: 'Invalid OTP',
@@ -66,11 +69,12 @@ const TwoFactorAuthForm: FC = () => {
             title: error.message,
           });
         }
+        setIsLoading(false)
       })
   }
 
   return (
-    <Card>
+    <Card className="w-96">
       <CardHeader className="space-y-1">
         <CardTitle className="text-2xl">2-Factor Authentication</CardTitle>
         <CardDescription>
@@ -79,21 +83,26 @@ const TwoFactorAuthForm: FC = () => {
       </CardHeader>
       <CardContent className="grid gap-4">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="w-full">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-4">
             <FormField
               control={form.control}
               name="otp"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Verification Code</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
+                  <FormControl >
+                    <Input type="text" maxLength={6} disabled={isLoading} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <Button className="w-full mt-6" type="submit">Verify</Button>
+            <Button className="w-full mt-6" type="submit" disabled={isLoading}>
+              {isLoading && (
+                <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+              )}
+              Verify
+            </Button>
           </form>
         </Form>
       </CardContent>
