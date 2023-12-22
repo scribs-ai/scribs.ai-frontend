@@ -91,7 +91,7 @@ const TwoFactorAuthForm: FC = () => {
                 <FormItem>
                   <FormLabel>Verification Code</FormLabel>
                   <FormControl >
-                    <Input type="text" maxLength={6} disabled={isLoading} {...field} />
+                    <Input type="text" maxLength={6} {...field} disabled={isLoading} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

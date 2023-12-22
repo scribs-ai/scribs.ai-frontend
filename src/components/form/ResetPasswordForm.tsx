@@ -99,7 +99,7 @@ const ResetPasswordForm = (props: { token: string }) => {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter your password" type="password" autoComplete="new-password" disabled={isLoading} {...field} />
+                    <Input placeholder="Enter your password" type="password" autoComplete="new-password" {...field} disabled={isLoading} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -112,7 +112,7 @@ const ResetPasswordForm = (props: { token: string }) => {
                 <FormItem >
                   <FormLabel>Confirm Password</FormLabel>
                   <FormControl>
-                    <Input placeholder="Re-enter your password" type="password" autoComplete="new-password" disabled={isLoading} {...field} />
+                    <Input placeholder="Re-enter your password" type="password" autoComplete="new-password" {...field} disabled={isLoading} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

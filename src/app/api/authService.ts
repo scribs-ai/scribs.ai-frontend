@@ -35,6 +35,24 @@ export const signUpApi = async (props: {
   }
 };
 
+export const userVerificationApi = async (props: {
+  token: string;
+}): Promise<any> => {
+  try {
+    const response = await axios.get(`${BASE_URL}/users/confirmation`, {
+      params: {
+        confirmation_token: props.token,
+      },
+    });
+    if (response.status === 200) {
+      cookies.set("token", response.data.token, { path: "/", httpOnly: true });
+      return response.data;
+    }
+  } catch (error) {
+    throw new Error("An unexpected error occurred");
+  }
+};
+
 export const signInApi = async (props: {
   email: string;
   password: string;

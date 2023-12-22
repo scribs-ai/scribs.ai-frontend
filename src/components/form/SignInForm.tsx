@@ -116,7 +116,7 @@ const SignInForm: FC = () => {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input placeholder="mail@example.com" disabled={isLoading} {...field} />
+                    <Input placeholder="mail@example.com" autoComplete="username" {...field} disabled={isLoading} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -129,7 +129,7 @@ const SignInForm: FC = () => {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter your password" type="password" disabled={isLoading} {...field} />
+                    <Input placeholder="Enter your password" type="password" autoComplete="current-password" {...field} disabled={isLoading} />
                   </FormControl>
                   <FormMessage />
                   <FormDescription>

@@ -8,7 +8,6 @@ import * as z from 'zod';
 import Link from "next/link"
 import { useRouter } from 'next/navigation'
 
-
 import {
   Form,
   FormControl,
@@ -76,9 +75,9 @@ const SignUpForm: FC = () => {
 
       if (response) {
         toast({
-          title: 'Sign up Successful! Please Login',
+          title: 'Account created, please verify to login.',
         });
-        router.push('/sign-in');
+        router.push('/user-verification');
       }
     } catch (error: any) {
 
@@ -123,7 +122,7 @@ const SignUpForm: FC = () => {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input placeholder="mail@example.com" {...field} disabled={isLoading} />
+                    <Input placeholder="mail@example.com" autoComplete="username" {...field} disabled={isLoading} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -136,7 +135,7 @@ const SignUpForm: FC = () => {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter your password" type="password" {...field} disabled={isLoading} />
+                    <Input placeholder="Enter your password" type="password" autoComplete="new-password" {...field} disabled={isLoading} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -149,7 +148,7 @@ const SignUpForm: FC = () => {
                 <FormItem >
                   <FormLabel>Confirm Password</FormLabel>
                   <FormControl>
-                    <Input placeholder="Re-enter your password" type="password" {...field} disabled={isLoading} />
+                    <Input placeholder="Re-enter your password" type="password" autoComplete="new-password" {...field} disabled={isLoading} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -190,4 +189,5 @@ const SignUpForm: FC = () => {
     </Card>
   )
 }
+
 export default SignUpForm;
