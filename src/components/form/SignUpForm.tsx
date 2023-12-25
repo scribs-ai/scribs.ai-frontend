@@ -1,6 +1,6 @@
 "use client"
 import { useForm } from "react-hook-form"
-import { FC, useState } from "react";
+import { ChangeEvent, FC, useState } from "react";
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -27,9 +27,11 @@ import { Input } from "../ui/input"
 import { Button } from "../ui/button"
 import { Icons } from "../ui/icons"
 import { toast } from "../ui/use-toast";
+import { Progress } from "../ui/progress";
 
 import { signUpApi } from "@/app/api/authService";
 import GoogleAuthButton from "../GoogleAuthButton";
+import calculatePasswordStrength from "../calculatePasswordStrength";
 
 const SignUpFormSchema = z
   .object({
@@ -39,7 +41,16 @@ const SignUpFormSchema = z
     password: z
       .string()
       .min(1, "Password is required")
-      .min(8, "Password must have 8 characters"),
+      .refine((password) => /^(?=.*[a-z])/.test(password),
+        'Password must contain at least one lowercase letter.')
+      .refine((password) => /^(?=.*[A-Z])/.test(password),
+        'Password must contain at least one uppercase letter.')
+      .refine((password) => /^(?=.*\d)/.test(password),
+        'Password must contain at least one digit.')
+      .refine((password) => /^(?=.*[!@#$%^&*])/.test(password),
+        'Password must contain at least one special character.')
+      .refine((password) => password.length >= 8,
+        'Password must have 8 characters'),
     confirmPassword: z
       .string()
       .min(8, 'Password must be at least 8 characters.'),
@@ -50,10 +61,11 @@ const SignUpFormSchema = z
   })
 
 const SignUpForm: FC = () => {
-
+  const [passwordValue, setPasswordValue] = useState<string>('')
+  const [passwordStrength, setPasswordStrength] = useState<number>(0)
   const [isLoading, setIsLoading] = useState<boolean>(false)
-
   const router = useRouter();
+
   const defaultValues = {
     email: '',
     password: '',
@@ -65,6 +77,13 @@ const SignUpForm: FC = () => {
     mode: "onChange",
     defaultValues
   })
+
+  const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const password: string = e.target.value;
+    setPasswordValue(password);
+    setPasswordStrength(calculatePasswordStrength(password));
+    form.setValue('password', password);
+  };
 
   const onSubmit = async (data: z.infer<typeof SignUpFormSchema>) => {
     try {
@@ -133,12 +152,13 @@ const SignUpForm: FC = () => {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter your password" type="password" autoComplete="new-password" {...field} disabled={isLoading} />
+                    <Input placeholder="Enter your password" type="password" autoComplete="new-password" {...field} disabled={isLoading} value={passwordValue} onChange={handlePasswordChange} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
+            <Progress value={passwordStrength} />
             <FormField
               control={form.control}
               name="confirmPassword"

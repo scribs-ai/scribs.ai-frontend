@@ -88,9 +88,14 @@ export const signInApi = async (props: {
       if (axiosError.response?.status === 404) {
         throw new Error("Email not found");
       }
-
       if (axiosError.response?.status === 401) {
-        throw new Error("Wrong email or password");
+        if (
+          (axiosError.response?.data as any)?.message === "Please confirm email"
+        ) {
+          throw new Error("Email is not verified.");
+        } else {
+          throw new Error("Wrong email or password");
+        }
       }
     }
     throw new Error("Sign-in failed");
