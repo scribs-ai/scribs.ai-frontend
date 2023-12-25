@@ -2,9 +2,12 @@
 
 import Link from "next/link";
 
+
 import { buttonVariants } from "@/components/ui/button";
 
 const Home = () => {
+
+
   return (
     <>
       <h1 className='text-4xl'>Welcome</h1>

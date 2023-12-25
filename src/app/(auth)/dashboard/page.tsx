@@ -1,28 +1,31 @@
-"use client"
+import Mainarea from "@/components/dashboard/Mainarea"
+import { Sidebar } from "@/components/dashboard/Sidebar.tsx"
+import { Metadata } from "next"
 
-import React from 'react'
 
-import Link from 'next/link'
+export const metadata: Metadata = {
+  title: "Dashboard",
+  description: "Scribs.ai",
+}
 
-import { buttonVariants } from '@/components/ui/button'
-import { toast } from '@/components/ui/use-toast'
-
-const page = () => {
+export default function Dashboard() {
   return (
     <>
-      <h1 className='text-4xl'>Welcome to dashboard</h1>
-      <Link
-        className={buttonVariants({ variant: "default" })}
-        href={'/sign-in'}
-        onClick={() => {
-          localStorage.removeItem("user");
-          toast({ title: 'Logout Successfully' })
-        }}
-      >
-        Logout
-      </Link>
+      <div className="hidden md:block">
+
+        <div className="border-t">
+          <div className="bg-background">
+            <div className="grid lg:grid-cols-5">
+              <Sidebar className="hidden lg:block" />
+              <div className="col-span-3 lg:col-span-4 lg:border-l">
+                <div className="h-full px-4 py-6 lg:px-8">
+                  <Mainarea />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </>
   )
 }
-
-export default page

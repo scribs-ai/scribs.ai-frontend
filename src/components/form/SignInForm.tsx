@@ -94,7 +94,7 @@ const SignInForm: FC = () => {
         </CardDescription>
       </CardHeader>
       <CardContent className="grid gap-4">
-        <GoogleAuthButton/>
+        <GoogleAuthButton />
         <div className="relative">
           <div className="absolute inset-0 flex items-center">
             <span className="w-full border-t" />
