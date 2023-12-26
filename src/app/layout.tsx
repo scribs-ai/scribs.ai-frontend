@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
+import { Toaster } from "@/components/ui/toaster"
 
 import '@/styles/globals.css'
 
@@ -15,6 +16,7 @@ const RootLayout = ({ children, }: { children: React.ReactNode }) => {
       <body className={inter.className}>
         <main>
           {children}
+          <Toaster />
         </main>
       </body>
     </html>

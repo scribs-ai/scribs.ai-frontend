@@ -168,7 +168,7 @@ export const twoFactorAuthApi = async (props: {
     });
     if (response.status === 200) {
       localStorage.removeItem("email");
-      cookies.set("token", response.data.token, { path: "/", httpOnly: true });
+      cookies.set("token", response.data.token, { path: "/" });
       return response.data;
     }
   } catch (error: unknown) {
