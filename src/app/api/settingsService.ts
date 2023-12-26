@@ -42,3 +42,17 @@ export const updateUserDataApi = async (
     throw new Error("Unable to update profile.");
   }
 };
+
+export const getUsageAnalyticData = async () => {
+  try {
+    const response = await axios.get(
+      "http://13.58.78.54:3000/settings/user_analytics",
+      {
+        headers: { Authorization: token },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    throw new Error("Unable to fetch data");
+  }
+};
