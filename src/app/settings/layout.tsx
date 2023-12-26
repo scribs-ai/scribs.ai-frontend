@@ -19,7 +19,7 @@ const sidebarNavItems = [
   },
   {
     title: "Privacy Settings",
-    href: "/settings/privacy",
+    href: "/settings/privacy-settings",
   },
   {
     title: "Integrations Settings",

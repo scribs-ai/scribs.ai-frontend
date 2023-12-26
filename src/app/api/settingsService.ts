@@ -1,7 +1,7 @@
 import Cookies from "universal-cookie";
 import axios, { AxiosResponse } from "axios";
 
-const BASE_URL = "http://13.58.78.54:3000/settings/user_profiles/16";
+const BASE_URL = "http://13.58.78.54:3000/settings";
 
 const cookies = new Cookies();
 
@@ -13,9 +13,12 @@ export const getUserDataApi = async (): Promise<any> => {
       throw new Error("Token not found.");
     }
 
-    const response: AxiosResponse<any> = await axios.get(BASE_URL, {
-      headers: { Authorization: token },
-    });
+    const response: AxiosResponse<any> = await axios.get(
+      `${BASE_URL}/user_profiles`,
+      {
+        headers: { Authorization: token },
+      }
+    );
 
     return response.data;
   } catch (error) {
@@ -30,23 +33,26 @@ export const updateUserDataApi = async (
     if (!token) {
       throw new Error("Token not found.");
     }
-    const response: AxiosResponse<any> = await axios.put(BASE_URL, data, {
-      headers: {
-        Authorization: token,
-        "Content-Type": "multipart/form-data",
-      },
-    });
-
+    const response: AxiosResponse<any> = await axios.put(
+      `${BASE_URL}/user_profiles`,
+      data,
+      {
+        headers: {
+          Authorization: token,
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
     return response.data;
   } catch (error) {
     throw new Error("Unable to update profile.");
   }
 };
 
-export const getUsageAnalyticData = async () => {
+export const getUsageAnalyticData = async (): Promise<any> => {
   try {
-    const response = await axios.get(
-      "http://13.58.78.54:3000/settings/user_analytics",
+    const response: AxiosResponse<any> = await axios.get(
+      `${BASE_URL}/user_analytics`,
       {
         headers: { Authorization: token },
       }
@@ -54,5 +60,16 @@ export const getUsageAnalyticData = async () => {
     return response.data;
   } catch (error) {
     throw new Error("Unable to fetch data");
+  }
+};
+
+export const exportDataApi = async (): Promise<any> => {
+  try {
+    const response: AxiosResponse<any> = await axios.get(
+      `${BASE_URL}/accounts/export_user_data_to_csv`
+    );
+    return response;
+  } catch (error) {
+    throw new Error("Unable to export data, try again.");
   }
 };
