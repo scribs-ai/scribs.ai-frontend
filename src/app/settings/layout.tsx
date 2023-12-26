@@ -29,6 +29,14 @@ const sidebarNavItems = [
     title: "Language and Accessibility",
     href: "/settings/language-accessibility",
   },
+  {
+    title: "Usage and Analytics",
+    href: "/settings/usage-analytics",
+  },
+  {
+    title: "Security Settings",
+    href: "/settings/security-settings",
+  },
 ]
 
 interface SettingsLayoutProps {
@@ -53,7 +61,7 @@ export default function SettingsLayout({ children }: SettingsLayoutProps) {
           <div className="flex-1 lg:max-w-2xl">{children}</div>
         </div>
       </div>
-      
+
     </>
   )
 }
