@@ -45,7 +45,7 @@ export const userVerificationApi = async (props: {
       },
     });
     if (response.status === 200) {
-      cookies.set("token", response.data.token, { path: "/", httpOnly: true });
+      cookies.set("token", response.data.token, { path: "/" });
       return response.data;
     }
   } catch (error) {
@@ -198,7 +198,6 @@ export const googleOauthApi = async (props: {
     if (googleOauthResponse.status === 200) {
       cookies.set("token", googleOauthResponse.data.token, {
         path: "/",
-        httpOnly: true,
       });
       return googleOauthResponse.data;
     }

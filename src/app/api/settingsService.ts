@@ -73,3 +73,18 @@ export const exportDataApi = async (): Promise<any> => {
     throw new Error("Unable to export data, try again.");
   }
 };
+
+export const deleteUserApi = async () => {
+  try {
+    const response: AxiosResponse<any> = await axios.delete(
+      `${BASE_URL}/accounts/delete_account`,
+      {
+        headers: { Authorization: token },
+      }
+    );
+    cookies.remove("token", { path: "/" });
+    return response.data;
+  } catch (error: any) {
+    return error.message;
+  }
+};

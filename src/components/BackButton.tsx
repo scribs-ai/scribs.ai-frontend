@@ -1,13 +1,17 @@
 "use client"
+
 import React from 'react'
-import { Button } from './ui/button'
+
 import { useRouter } from 'next/navigation'
-import { ArrowLeftCircle } from 'lucide-react'
+import { ChevronLeft } from 'lucide-react'
+import { Button } from './ui/button'
 
 const BackButton = () => {
   const router = useRouter()
   return (
-    <ArrowLeftCircle onClick={() => router.push('/dashboard')} />
+    <Button variant="outline" size="icon" onClick={() => router.push('/dashboard')}>
+      <ChevronLeft className="h-6 w-6" />
+    </Button>
 
   )
 }

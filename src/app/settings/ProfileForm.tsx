@@ -38,8 +38,6 @@ const profileFormSchema = z.object({
       required_error: "Please write an valid email address.",
     })
     .email(),
-  created_at: z.string(),
-  updated_at: z.string(),
 })
 
 type ProfileFormSchemaType = z.infer<typeof profileFormSchema>
@@ -51,8 +49,6 @@ const ProfileForm: React.FC = () => {
     name: '',
     email: '',
     profile_picture: undefined,
-    created_at: '',
-    updated_at: '',
   });
 
   const form = useForm<ProfileFormSchemaType>({
@@ -171,37 +167,11 @@ const ProfileForm: React.FC = () => {
             <FormItem className="space-y-2">
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input placeholder="Enter email" {...field} />
+                <Input placeholder="Enter email" {...field} disabled />
               </FormControl>
               <FormDescription>
                 You can manage verified email addresses in your email settings.
               </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="created_at"
-          render={({ field }) => (
-            <FormItem className="space-y-3">
-              <FormLabel>Created At</FormLabel>
-              <FormControl>
-                <Input placeholder="Created At" {...field} readOnly={true} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="updated_at"
-          render={({ field }) => (
-            <FormItem className="space-y-3">
-              <FormLabel>Updated At</FormLabel>
-              <FormControl>
-                <Input placeholder="Updated At" {...field} readOnly={true} />
-              </FormControl>
               <FormMessage />
             </FormItem>
           )}

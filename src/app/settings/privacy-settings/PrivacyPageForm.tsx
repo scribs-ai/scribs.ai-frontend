@@ -5,29 +5,44 @@ import { Separator } from "@/components/ui/separator"
 import { toast } from "@/components/ui/use-toast"
 
 import Link from "next/link"
+import { useRouter } from 'next/navigation'
 
-import { exportDataApi } from "@/app/api/settingsService"
+import { deleteUserApi, exportDataApi } from "@/app/api/settingsService"
 import downloadCSV from "@/components/settings/downloadCSV"
 import { signOutApi } from "@/app/api/authService"
-import { useRouter } from 'next/navigation'
 
 const PrivacyFormPage: React.FC = () => {
 
   const router = useRouter();
 
   const handleLogout = async () => {
-    await signOutApi().then((response) => {
-      toast({
-        title: response
+    await signOutApi()
+      .then((response) => {
+        toast({
+          title: response
+        })
+        router.push('/')
       })
-      router.push('/')
-    })
       .catch((error) => {
         toast({
           title: error
         })
       })
+  }
 
+  const handleDelete = async () => {
+    await deleteUserApi()
+      .then((response) => {
+        toast({
+          title: response.message
+        })
+        router.push('/')
+      })
+      .catch((error) => {
+        toast({
+          title: error
+        })
+      })
   }
 
   const handleExport = async () => {
@@ -74,7 +89,12 @@ const PrivacyFormPage: React.FC = () => {
 
         <div className="flex items-center justify-between rounded-lg border p-4">
           <h3 className="text-lg font-semibold">Logout from all session</h3>
-          <Button variant="destructive" onClick={handleLogout}>Logout</Button>
+          <Button variant='outline' className="border border-red-500 text-red-500 hover:bg-red-500 hover:text-white" onClick={handleLogout}>Logout</Button>
+        </div>
+
+        <div className="flex items-center justify-between rounded-lg border p-4">
+          <h3 className="text-lg font-semibold">Delete your account</h3>
+          <Button variant='outline' className="border border-red-500 text-red-500 hover:bg-red-500 hover:text-white" onClick={handleDelete}>Delete Account</Button>
         </div>
 
       </div>
