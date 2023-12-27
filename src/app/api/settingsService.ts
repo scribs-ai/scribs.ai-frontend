@@ -14,7 +14,7 @@ export const getUserDataApi = async (): Promise<any> => {
     }
 
     const response: AxiosResponse<any> = await axios.get(
-      `${BASE_URL}/user_profiles`,
+      `${BASE_URL}/user_profiles/16`,
       {
         headers: { Authorization: token },
       }
@@ -34,7 +34,7 @@ export const updateUserDataApi = async (
       throw new Error("Token not found.");
     }
     const response: AxiosResponse<any> = await axios.put(
-      `${BASE_URL}/user_profiles`,
+      `${BASE_URL}/user_profiles/16`,
       data,
       {
         headers: {
@@ -66,7 +66,7 @@ export const getUsageAnalyticData = async (): Promise<any> => {
 export const exportDataApi = async (): Promise<any> => {
   try {
     const response: AxiosResponse<any> = await axios.get(
-      `${BASE_URL}/accounts/export_user_data_to_csv`
+      `${BASE_URL}/accounts/export_user_data.json`
     );
     return response;
   } catch (error) {

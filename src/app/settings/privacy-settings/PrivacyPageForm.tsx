@@ -7,12 +7,14 @@ import { toast } from "@/components/ui/use-toast"
 import Link from "next/link"
 
 import { exportDataApi } from "@/app/api/settingsService"
+import downloadCSV from "@/components/settings/downloadCSV"
 
 const PrivacyFormPage: React.FC = () => {
 
   const handleExport = async () => {
     exportDataApi()
       .then((res) => {
+        downloadCSV(res.data)
         toast({
           title: "File downloaded successfully"
         })
