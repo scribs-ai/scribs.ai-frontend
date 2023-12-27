@@ -13,14 +13,14 @@ import { useRouter } from 'next/navigation'
 
 const PrivacyFormPage: React.FC = () => {
 
-  const route = useRouter();
+  const router = useRouter();
 
   const handleLogout = async () => {
     await signOutApi().then((response) => {
       toast({
         title: response
       })
-      route.push('/')
+      router.push('/')
     })
       .catch((error) => {
         toast({
