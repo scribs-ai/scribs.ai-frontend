@@ -1,15 +1,12 @@
-import type { Metadata } from 'next'
+"use client"
+
 import { Inter } from 'next/font/google'
 import { Toaster } from "@/components/ui/toaster"
-
+import '../i18n'
 import '@/styles/globals.css'
 
 const inter = Inter({ subsets: ['latin'] })
 
-export const metadata: Metadata = {
-  title: 'Scribs.ai',
-  description: 'Login Setup',
-}
 const RootLayout = ({ children, }: { children: React.ReactNode }) => {
   return (
     <html lang="en">

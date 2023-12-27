@@ -1,7 +1,11 @@
 "use client"
 
+import { useEffect, useState } from "react"
+import axios from "axios"
+
 import * as z from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
 
 import {
   Form,
@@ -12,13 +16,12 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
-import { useForm } from "react-hook-form"
-
 import { Button, buttonVariants } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
-import { useEffect, useState } from "react"
-import axios from "axios"
 import { toast } from "@/components/ui/use-toast"
+import { ChevronDown } from "lucide-react"
+
+import { cn } from "@/lib/utils"
+import { useTranslation } from 'react-i18next';
 
 const BASE_URL = 'http://13.58.78.54:3000/settings/languages/';
 
@@ -32,6 +35,7 @@ const languageFormSchema = z.object({
 type languageFormValues = z.infer<typeof languageFormSchema>
 
 const LangAndAccessForm: React.FC = () => {
+  const { t, i18n } = useTranslation();
 
   const [languageOptions, setLanguageOptions] = useState<string[]>([]);
 
@@ -50,7 +54,6 @@ const LangAndAccessForm: React.FC = () => {
         });
       }
     };
-
     fetchLanguageOptions();
   }, []);
 
@@ -58,19 +61,19 @@ const LangAndAccessForm: React.FC = () => {
     resolver: zodResolver(languageFormSchema),
   });
 
-
   const onSubmit = async (data: languageFormValues) => {
 
     try {
       const response = await axios.post(`${BASE_URL}set_language`, { locale: data.language })
       if (response) {
+        i18n.changeLanguage(data.language)
         toast({
-          title: 'Language change successfully'
+          title: t('languageChangeSuccess'),
         })
       }
     } catch (error) {
       toast({
-        title: 'Unable to change the language, please try again.'
+        title: t('languageChangeError'),
       })
     }
   }
@@ -83,7 +86,7 @@ const LangAndAccessForm: React.FC = () => {
           name="language"
           render={({ field }) => (
             <FormItem className="space-y-4">
-              <FormLabel>Language</FormLabel>
+              <FormLabel>{t('language')}</FormLabel>
               <div className="relative w-max">
                 <FormControl>
                   <select
@@ -100,16 +103,16 @@ const LangAndAccessForm: React.FC = () => {
                     ))}
                   </select>
                 </FormControl>
+                <ChevronDown className="absolute right-3 top-3 h-5 w-5 opacity-50" />
               </div>
               <FormDescription>
-                Set the language you want to use in the dashboard.
+                {t('languageOptionsDesc')}
               </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
-
-        <Button type="submit">Change language</Button>
+        <Button type="submit">{t("languageButton")}</Button>
       </form>
     </Form>
   )
