@@ -206,3 +206,17 @@ export const googleOauthApi = async (props: {
     throw new Error("Please try again.");
   }
 };
+
+export const signOutApi = async (): Promise<string> => {
+  const token: string | undefined = cookies.get("token");
+
+  try {
+    const response = await axios.delete(`${BASE_URL}/users/sign_out`, {
+      headers: { Authorization: token },
+    });
+    cookies.remove("token", { path: "/" });
+    return "Logout Successfully";
+  } catch (error: any) {
+    return error.message;
+  }
+};
