@@ -46,6 +46,7 @@ type ProfileFormSchemaType = z.infer<typeof profileFormSchema>
 
 const ProfileForm: React.FC = () => {
 
+  const [previewImage, setPreviewImage] = useState<string | undefined>(undefined);
   const [userData, setUserData] = useState<ProfileFormSchemaType>({
     name: '',
     email: '',
@@ -76,6 +77,17 @@ const ProfileForm: React.FC = () => {
     fetchUserData();
   }, [form]);
 
+  const handleImagePreview = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewImage(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const onSubmit = async (data: ProfileFormSchemaType) => {
     try {
       const formData = new FormData();
@@ -102,7 +114,14 @@ const ProfileForm: React.FC = () => {
     <Form  {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-7" >
         <Avatar className="w-32 h-32">
-          <AvatarImage alt="Profile-image" src={'http://13.58.78.54:3000' + userData.profile_picture} />
+          {previewImage ? (
+            <AvatarImage alt="Profile-image" src={previewImage} />
+          ) : (
+            <AvatarImage
+              alt="Profile-image"
+              src={`http://13.58.78.54:3000${userData.profile_picture}`}
+            />
+          )}
           <AvatarFallback>{userData.name}</AvatarFallback>
         </Avatar>
         <FormField
@@ -116,7 +135,10 @@ const ProfileForm: React.FC = () => {
                   accept="image/png, image/jpeg, image/jpg"
                   type="file"
                   placeholder="profile image"
-                  {...fileRef}
+                  onChange={(e) => {
+                    fileRef.onChange(e);
+                    handleImagePreview(e);
+                  }}
                 />
               </FormControl>
               <FormDescription>
