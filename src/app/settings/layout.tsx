@@ -24,7 +24,7 @@ const sidebarNavItems = [
   },
   {
     title: "Integrations Settings",
-    href: "/settings/integration",
+    href: "/settings/integration-settings",
   },
   {
     title: "Language and Accessibility",

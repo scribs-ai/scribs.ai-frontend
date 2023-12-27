@@ -88,3 +88,26 @@ export const deleteUserApi = async () => {
     return error.message;
   }
 };
+
+export const integrationsettingApi = async (
+  data: Record<string, any>
+): Promise<any> => {
+  try {
+    if (!token) {
+      throw new Error("Token not found.");
+    }
+    const response: AxiosResponse<any> = await axios.post(
+      "http://13.58.78.54:3000/google_drive/upload_file",
+      data,
+      {
+        headers: {
+          Authorization: token,
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    throw new Error("Unable to update profile.");
+  }
+};
