@@ -32,33 +32,7 @@ import { Progress } from "../ui/progress";
 import { signUpApi } from "@/app/api/authService";
 import GoogleAuthButton from "../GoogleAuthButton";
 import calculatePasswordStrength from "../calculatePasswordStrength";
-
-const SignUpFormSchema = z
-  .object({
-    email: z
-      .string()
-      .email("Invalid email format."),
-    password: z
-      .string()
-      .min(1, "Password is required")
-      .refine((password) => /^(?=.*[a-z])/.test(password),
-        'Password must contain at least one lowercase letter.')
-      .refine((password) => /^(?=.*[A-Z])/.test(password),
-        'Password must contain at least one uppercase letter.')
-      .refine((password) => /^(?=.*\d)/.test(password),
-        'Password must contain at least one digit.')
-      .refine((password) => /^(?=.*[!@#$%^&*])/.test(password),
-        'Password must contain at least one special character.')
-      .refine((password) => password.length >= 8,
-        'Password must have 8 characters'),
-    confirmPassword: z
-      .string()
-      .min(8, 'Password must be at least 8 characters.'),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    path: ['confirmPassword'],
-    message: 'Passwords do not match.',
-  })
+import { signUpFormSchema } from "@/lib/schemas";
 
 const SignUpForm: FC = () => {
   const [passwordValue, setPasswordValue] = useState<string>('')
@@ -66,16 +40,14 @@ const SignUpForm: FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const router = useRouter();
 
-  const defaultValues = {
-    email: '',
-    password: '',
-    confirmPassword: '',
-  };
-
-  const form = useForm<z.infer<typeof SignUpFormSchema>>({
-    resolver: zodResolver(SignUpFormSchema),
+  const form = useForm<z.infer<typeof signUpFormSchema>>({
+    resolver: zodResolver(signUpFormSchema),
     mode: "onChange",
-    defaultValues
+    defaultValues: {
+      email: '',
+      password: '',
+      confirmPassword: '',
+    }
   })
 
   const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -85,7 +57,7 @@ const SignUpForm: FC = () => {
     form.setValue('password', password);
   };
 
-  const onSubmit = async (data: z.infer<typeof SignUpFormSchema>) => {
+  const onSubmit = async (data: z.infer<typeof signUpFormSchema>) => {
     try {
       setIsLoading(true);
 

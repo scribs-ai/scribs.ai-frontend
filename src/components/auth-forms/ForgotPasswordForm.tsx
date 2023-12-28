@@ -1,11 +1,10 @@
 "use client"
 
 import { FC, useState } from "react";
-
 import { useForm } from "react-hook-form"
 import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
 import { useRouter } from 'next/navigation'
+import * as z from "zod";
 
 import {
   Form,
@@ -24,32 +23,23 @@ import {
 import { Input } from "../ui/input"
 import { Button } from "../ui/button"
 import { toast } from "../ui/use-toast";
-
-import { forgotPasswordApi } from "@/app/api/authService";
 import { Icons } from "../ui/icons";
 
-const ForgetPasswordFormSchema = z
-  .object({
-    email: z
-      .string()
-      .min(1, 'Email is required')
-      .email('Invalid email format'),
-  })
+import { forgetPasswordFormSchema } from "@/lib/schemas";
+import { forgotPasswordApi } from "@/app/api/authService";
 
 const ForgetPasswordForm: FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const router = useRouter()
-  const defaultValues = {
-    email: ''
-  }
-
-  const form = useForm<z.infer<typeof ForgetPasswordFormSchema>>({
-    resolver: zodResolver(ForgetPasswordFormSchema),
+  const form = useForm<z.infer<typeof forgetPasswordFormSchema>>({
+    resolver: zodResolver(forgetPasswordFormSchema),
     mode: "onChange",
-    defaultValues
+    defaultValues: {
+      email: "",
+    }
   })
 
-  const onSubmit = async (data: z.infer<typeof ForgetPasswordFormSchema>) => {
+  const onSubmit = async (data: z.infer<typeof forgetPasswordFormSchema>) => {
     setIsLoading(true)
     await forgotPasswordApi({ ...data })
       .then(() => {

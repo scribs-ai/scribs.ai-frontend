@@ -26,29 +26,21 @@ import { toast } from "../ui/use-toast";
 import { Icons } from "../ui/icons";
 
 import { twoFactorAuthApi } from "@/app/api/authService";
-
-const TwoFactorAuthFormSchema = z
-  .object({
-    otp: z
-      .string()
-      .min(1, 'Enter otp')
-      .min(6, 'opt should be of 6-digit')
-  })
+import { twoFactorAuthFormSchema } from "@/lib/schemas";
 
 const TwoFactorAuthForm: FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const router = useRouter()
-  const defaultValues = {
-    otp: ''
-  }
 
-  const form = useForm<z.infer<typeof TwoFactorAuthFormSchema>>({
-    resolver: zodResolver(TwoFactorAuthFormSchema),
+  const form = useForm<z.infer<typeof twoFactorAuthFormSchema>>({
+    resolver: zodResolver(twoFactorAuthFormSchema),
     mode: "onChange",
-    defaultValues
+    defaultValues: {
+      otp: ''
+    }
   })
 
-  const onSubmit = async (data: z.infer<typeof TwoFactorAuthFormSchema>) => {
+  const onSubmit = async (data: z.infer<typeof twoFactorAuthFormSchema>) => {
     setIsLoading(true)
     await twoFactorAuthApi({ ...data })
       .then(() => {

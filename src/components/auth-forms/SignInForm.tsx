@@ -32,34 +32,22 @@ import { toast } from "../ui/use-toast";
 
 import { signInApi } from "@/app/api/authService";
 import GoogleAuthButton from "../GoogleAuthButton";
-
-const SignInFormSchema = z
-  .object({
-    email: z
-      .string()
-      .min(1, 'Email is required')
-      .email('Invalid email format'),
-    password: z
-      .string()
-      .min(1, "Password is required")
-      .min(8, "Password must have 8 characters"),
-  })
+import { signInFormSchema } from "@/lib/schemas";
 
 const SignInForm: FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const router = useRouter()
-  const defaultValues = {
-    email: '',
-    password: '',
-  };
 
-  const form = useForm<z.infer<typeof SignInFormSchema>>({
-    resolver: zodResolver(SignInFormSchema),
+  const form = useForm<z.infer<typeof signInFormSchema>>({
+    resolver: zodResolver(signInFormSchema),
     mode: "onChange",
-    defaultValues
+    defaultValues: {
+      email: '',
+      password: '',
+    }
   })
 
-  const onSubmit = async (data: z.infer<typeof SignInFormSchema>) => {
+  const onSubmit = async (data: z.infer<typeof signInFormSchema>) => {
     try {
       setIsLoading(true);
 

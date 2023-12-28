@@ -1,9 +1,10 @@
+import { config } from "@/config";
 import axios, { AxiosError, AxiosResponse } from "axios";
 import Cookies from "universal-cookie";
 
 const cookies = new Cookies();
 
-const BASE_URL: string = "http://13.58.78.54:3000";
+const BASE_URL: string = config.base_url;
 
 export const signUpApi = async (props: {
   email: string;

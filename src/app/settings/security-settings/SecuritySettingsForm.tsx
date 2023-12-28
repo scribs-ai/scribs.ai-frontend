@@ -15,17 +15,16 @@ import {
 } from "@/components/ui/form"
 import { Switch } from "@/components/ui/switch"
 import { toast } from "@/components/ui/use-toast"
+import { securityFormSchema } from "@/lib/schemas"
 
-const FormSchema = z.object({
-  two_factor_auth: z.boolean(),
-})
+type schemaType = z.infer<typeof securityFormSchema>
 
 const SecuritySettingsForm = () => {
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
+  const form = useForm<schemaType>({
+    resolver: zodResolver(securityFormSchema),
   })
 
-  const onSubmit = (data: z.infer<typeof FormSchema>) => {
+  const onSubmit = (data: schemaType) => {
     toast({
       title: "You submitted successfully",
     })

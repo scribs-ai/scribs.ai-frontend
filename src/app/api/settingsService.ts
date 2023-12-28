@@ -1,7 +1,8 @@
 import Cookies from "universal-cookie";
 import axios, { AxiosResponse } from "axios";
+import { config } from "@/config";
 
-const BASE_URL = "http://13.58.78.54:3000/settings";
+const BASE_URL = `${config.base_url}/settings`;
 
 const cookies = new Cookies();
 

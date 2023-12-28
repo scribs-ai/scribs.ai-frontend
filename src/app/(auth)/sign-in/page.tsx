@@ -1,9 +1,9 @@
 import React from 'react'
 
-import SignInForm from '@/components/form/SignInForm'
+import SignInForm from '@/components/auth-forms/SignInForm'
 
 const page = () => {
-  return <SignInForm/>
+  return <SignInForm />
 
 }
 export default page

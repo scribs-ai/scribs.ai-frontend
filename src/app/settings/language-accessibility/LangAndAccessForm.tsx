@@ -22,15 +22,10 @@ import { ChevronDown } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { useTranslation } from 'react-i18next';
+import { languageFormSchema } from "@/lib/schemas"
 
 const BASE_URL = 'http://13.58.78.54:3000/settings/languages/';
 
-const languageFormSchema = z.object({
-  language: z
-    .string({
-      required_error: "Please select an language to display.",
-    })
-})
 
 type languageFormValues = z.infer<typeof languageFormSchema>
 

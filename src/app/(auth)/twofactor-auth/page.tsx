@@ -1,4 +1,4 @@
-import TwoFactorAuthForm from '@/components/form/TwoFactorAuthForm';
+import TwoFactorAuthForm from '@/components/auth-forms/TwoFactorAuthForm';
 import React from 'react'
 
 const page = () => {

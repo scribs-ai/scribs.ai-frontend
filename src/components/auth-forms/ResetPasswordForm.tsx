@@ -1,10 +1,8 @@
 "use client"
 import { useState } from "react";
-
 import { useForm } from "react-hook-form"
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-
 import { useRouter } from "next/navigation";
 
 import {
@@ -27,37 +25,23 @@ import { toast } from "../ui/use-toast";
 import { Icons } from "../ui/icons";
 
 import { resetPasswordApi } from "@/app/api/authService";
+import { resetPasswordFormSchema } from "@/lib/schemas";
 
-const ResetPasswordFormSchema = z
-  .object({
-    password: z
-      .string()
-      .min(1, "Password is required")
-      .min(8, "Password must have 8 characters"),
-    confirmPassword: z
-      .string()
-      .min(8, 'Password must be at least 8 characters.'),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    path: ['confirmPassword'],
-    message: 'Passwords do not match.',
-  })
 
 const ResetPasswordForm = (props: { token: string }) => {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const router = useRouter();
-  const defaultValues = {
-    password: '',
-    confirmPassword: ''
-  }
 
-  const form = useForm<z.infer<typeof ResetPasswordFormSchema>>({
-    resolver: zodResolver(ResetPasswordFormSchema),
+  const form = useForm<z.infer<typeof resetPasswordFormSchema>>({
+    resolver: zodResolver(resetPasswordFormSchema),
     mode: "onChange",
-    defaultValues
+    defaultValues: {
+      password: '',
+      confirmPassword: '',
+    }
   })
 
-  const onSubmit = async (data: z.infer<typeof ResetPasswordFormSchema>) => {
+  const onSubmit = async (data: z.infer<typeof resetPasswordFormSchema>) => {
     setIsLoading(true)
     await resetPasswordApi({ ...data, ...props })
       .then(() => {

@@ -18,12 +18,8 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { integrationsettingApi } from '@/app/api/settingsService'
 import { toast } from '@/components/ui/use-toast'
+import { integrationFormSchema } from '@/lib/schemas'
 
-const integrationFormSchema = z.object({
-  file: z
-    .any()
-    .refine((file) => file?.length == 1, "File is required."),
-})
 
 type IntegrationFormSchemaType = z.infer<typeof integrationFormSchema>
 

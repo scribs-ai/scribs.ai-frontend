@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -19,51 +19,33 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { toast } from "@/components/ui/use-toast"
-
-import { getUserDataApi, updateUserDataApi } from "../api/settingsService"
 import { XCircle } from "lucide-react"
 
-const profileFormSchema = z.object({
-  profile_picture: z
-    .any(),
-  name: z
-    .string()
-    .min(2, {
-      message: "Name must be at least 2 characters.",
-    })
-    .max(30, {
-      message: "Name must not be longer than 30 characters.",
-    }),
-  email: z
-    .string({
-      required_error: "Please write an valid email address.",
-    })
-    .email(),
-})
+import { getUserDataApi, updateUserDataApi } from "../api/settingsService"
+import { getSourceUrl } from "@/lib/utils"
+import { profileFormSchema } from "@/lib/schemas"
 
 type ProfileFormSchemaType = z.infer<typeof profileFormSchema>
 
 const ProfileForm: React.FC = () => {
-
-  const [previewImage, setPreviewImage] = useState<string | undefined>(undefined);
-  const [userData, setUserData] = useState<ProfileFormSchemaType>({
-    name: '',
-    email: '',
-    profile_picture: undefined,
-  });
-
+  const fileRef = useRef<any>(null)
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [previousPicture, setPreviousPicture] = useState("")
   const form = useForm<ProfileFormSchemaType>({
     resolver: zodResolver(profileFormSchema),
-    defaultValues: userData
+    defaultValues: {
+      name: '',
+      email: '',
+      profile_picture: null,
+    }
   });
-  const fileRef = form.register("profile_picture", { required: true });
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await getUserDataApi();
-        setUserData(response);
-        form.reset(response);
+        const { name, email, profile_picture } = await getUserDataApi();
+        form.reset({ name: name ?? "", email, profile_picture: profile_picture ?? "" })
+        setPreviousPicture(profile_picture)
       } catch (error: any) {
         toast({
           title: error.message,
@@ -86,6 +68,12 @@ const ProfileForm: React.FC = () => {
     }
   }
 
+  const handleRemove = () => {
+    setPreviewImage(getSourceUrl(previousPicture))
+    form.setValue('profile_picture', null)
+    fileRef.current.value = ""
+  }
+
   const onSubmit = async (data: ProfileFormSchemaType) => {
     try {
       const formData = new FormData();
@@ -94,10 +82,8 @@ const ProfileForm: React.FC = () => {
       if (data.profile_picture !== null && typeof data.profile_picture !== 'string') {
         formData.append('user[image]', data.profile_picture);
       }
-
       const response = await updateUserDataApi(formData)
       if (response) {
-        setUserData(response)
         toast({
           title: 'Profile updated successfully!',
         });
@@ -113,15 +99,8 @@ const ProfileForm: React.FC = () => {
     <Form  {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-7" >
         <Avatar className="w-32 h-32">
-          {previewImage ? (
-            <AvatarImage alt="Profile-image" src={previewImage} />
-          ) : (
-            <AvatarImage
-              alt="Profile-image"
-              src={`http://13.58.78.54:3000${userData.profile_picture}`}
-            />
-          )}
-          <AvatarFallback>{userData.name}</AvatarFallback>
+          <AvatarImage alt="Profile-image" src={previewImage ? previewImage : getSourceUrl(form.getValues('profile_picture'))} />
+          <AvatarFallback>{form.getValues('name')}</AvatarFallback>
         </Avatar>
         <FormField
           control={form.control}
@@ -132,16 +111,16 @@ const ProfileForm: React.FC = () => {
               <div className="relative w-max">
                 <FormControl>
                   <Input
+                    ref={fileRef}
                     accept="image/png, image/jpeg, image/jpg"
                     type="file"
                     placeholder="profile image"
                     onChange={(e) => {
-                      fileRef.onChange(e);
                       handleImagePreview(e);
                     }}
                   />
                 </FormControl>
-                <XCircle className="absolute right-3 top-3 h-5 w-5 opacity-50" />
+                {fileRef?.current?.value !== "" && <XCircle className="absolute right-3 top-3 h-5 w-5 opacity-50" onClick={handleRemove} />}
               </div>
               <FormDescription>
                 You can change profile picture from here.
