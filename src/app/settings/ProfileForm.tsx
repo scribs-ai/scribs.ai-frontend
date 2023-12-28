@@ -21,6 +21,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { toast } from "@/components/ui/use-toast"
 
 import { getUserDataApi, updateUserDataApi } from "../api/settingsService"
+import { XCircle } from "lucide-react"
 
 const profileFormSchema = z.object({
   profile_picture: z
@@ -79,19 +80,21 @@ const ProfileForm: React.FC = () => {
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreviewImage(reader.result as string);
-      };
+        form.setValue('profile_picture', file);
+      }
       reader.readAsDataURL(file);
     }
-  };
+  }
 
   const onSubmit = async (data: ProfileFormSchemaType) => {
     try {
       const formData = new FormData();
       formData.append('user[name]', data.name);
       formData.append('user[email]', data.email);
-      if (typeof data.profile_picture !== 'string') {
-        formData.append('user[image]', data.profile_picture[0]);
+      if (data.profile_picture !== null && typeof data.profile_picture !== 'string') {
+        formData.append('user[image]', data.profile_picture);
       }
+
       const response = await updateUserDataApi(formData)
       if (response) {
         setUserData(response)
@@ -126,17 +129,20 @@ const ProfileForm: React.FC = () => {
           render={() => (
             <FormItem className="space-y-2" >
               <FormLabel>Change Profile Picture</FormLabel>
-              <FormControl>
-                <Input
-                  accept="image/png, image/jpeg, image/jpg"
-                  type="file"
-                  placeholder="profile image"
-                  onChange={(e) => {
-                    fileRef.onChange(e);
-                    handleImagePreview(e);
-                  }}
-                />
-              </FormControl>
+              <div className="relative w-max">
+                <FormControl>
+                  <Input
+                    accept="image/png, image/jpeg, image/jpg"
+                    type="file"
+                    placeholder="profile image"
+                    onChange={(e) => {
+                      fileRef.onChange(e);
+                      handleImagePreview(e);
+                    }}
+                  />
+                </FormControl>
+                <XCircle className="absolute right-3 top-3 h-5 w-5 opacity-50" />
+              </div>
               <FormDescription>
                 You can change profile picture from here.
               </FormDescription>
