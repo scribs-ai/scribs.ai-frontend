@@ -98,7 +98,7 @@ export const integrationsettingApi = async (
       throw new Error("Token not found.");
     }
     const response: AxiosResponse<any> = await axios.post(
-      "http://13.58.78.54:3000/google_drive/upload_file",
+      `${config.base_url}/google_drive/upload_file`,
       data,
       {
         headers: {
@@ -119,7 +119,7 @@ export const subscriptionApi = async (data: string): Promise<any> => {
       throw new Error("Token not found.");
     }
     const response: AxiosResponse<any> = await axios.post(
-      "http://13.58.78.54:3000/customer_intent",
+      `${config.base_url}/customer_intent`,
       { plan: data },
       {
         headers: {
