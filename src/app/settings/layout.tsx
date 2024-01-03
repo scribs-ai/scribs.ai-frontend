@@ -38,6 +38,10 @@ const sidebarNavItems = [
     title: "Security Settings",
     href: "/settings/security-settings",
   },
+  {
+    title: "Subscription",
+    href: "/settings/subscription",
+  },
 ]
 
 interface SettingsLayoutProps {

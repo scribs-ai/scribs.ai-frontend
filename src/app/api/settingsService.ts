@@ -112,3 +112,23 @@ export const integrationsettingApi = async (
     throw new Error("Unable to update profile.");
   }
 };
+
+export const subscriptionApi = async (data: string): Promise<any> => {
+  try {
+    if (!token) {
+      throw new Error("Token not found.");
+    }
+    const response: AxiosResponse<any> = await axios.post(
+      "http://13.58.78.54:3000/customer_intent",
+      { plan: data },
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
+    return response.data.client_secret;
+  } catch (error) {
+    throw new Error("Unable to process payment.");
+  }
+};
