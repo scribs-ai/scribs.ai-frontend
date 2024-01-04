@@ -1,4 +1,5 @@
 import { config } from "@/config";
+import { getTime } from "@/lib/utils";
 import axios, { AxiosError, AxiosResponse } from "axios";
 import Cookies from "universal-cookie";
 
@@ -46,7 +47,10 @@ export const userVerificationApi = async (props: {
       },
     });
     if (response.status === 200) {
-      cookies.set("token", response.data.token, { path: "/" });
+      cookies.set("token", response.data.token, {
+        path: "/",
+        expires: getTime(),
+      });
       return response.data;
     }
   } catch (error) {
@@ -169,7 +173,10 @@ export const twoFactorAuthApi = async (props: {
     });
     if (response.status === 200) {
       localStorage.removeItem("email");
-      cookies.set("token", response.data.token, { path: "/" });
+      cookies.set("token", response.data.token, {
+        path: "/",
+        expires: getTime(),
+      });
       return response.data;
     }
   } catch (error: unknown) {
@@ -199,6 +206,7 @@ export const googleOauthApi = async (props: {
     if (googleOauthResponse.status === 200) {
       cookies.set("token", googleOauthResponse.data.token, {
         path: "/",
+        expires: getTime(),
       });
       return googleOauthResponse.data;
     }
