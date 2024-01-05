@@ -54,10 +54,18 @@ const SignInForm: FC = () => {
       const response = await signInApi({ ...data });
 
       if (response) {
-        toast({
-          title: '6-digit verification code sent to your email.',
-        });
-        router.push('/twofactor-auth');
+        if (!response.two_factor) {
+          toast({
+            title: 'Logged In successfully. Welcome.'
+          });
+          setIsLoading(false);
+          router.replace('/dashboard');
+        } else {
+          toast({
+            title: '6-digit verification code sent to your email.',
+          });
+          router.push('/twofactor-auth');
+        }
       } else {
         toast({
           title: 'Sign-in failed. Please check your credentials.',

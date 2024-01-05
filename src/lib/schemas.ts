@@ -77,7 +77,7 @@ export const languageFormSchema = z.object({
 });
 
 export const securityFormSchema = z.object({
-  two_factor_auth: z.boolean(),
+  two_factor: z.boolean(),
 });
 
 export const profileFormSchema = z.object({

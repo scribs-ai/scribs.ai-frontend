@@ -16,6 +16,7 @@ import {
 import { Switch } from "@/components/ui/switch"
 import { toast } from "@/components/ui/use-toast"
 import { securityFormSchema } from "@/lib/schemas"
+import { twoFactorSettingApi } from "@/app/api/settingsService"
 
 type schemaType = z.infer<typeof securityFormSchema>
 
@@ -24,10 +25,19 @@ const SecuritySettingsForm = () => {
     resolver: zodResolver(securityFormSchema),
   })
 
-  const onSubmit = (data: schemaType) => {
-    toast({
-      title: "You submitted successfully",
-    })
+  const onSubmit = async (data: schemaType) => {
+    try {
+      const response = await twoFactorSettingApi(data)
+      if (response) {
+        toast({
+          title: "Setting updated successfully"
+        })
+      }
+    } catch (error: any) {
+      toast({
+        title: error.message,
+      })
+    }
   }
 
   return (
@@ -38,7 +48,7 @@ const SecuritySettingsForm = () => {
           <div className="space-y-4">
             <FormField
               control={form.control}
-              name="two_factor_auth"
+              name="two_factor"
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                   <div className="space-y-0.5">

@@ -132,3 +132,18 @@ export const subscriptionApi = async (data: string): Promise<any> => {
     throw new Error("Unable to process payment.");
   }
 };
+
+export const twoFactorSettingApi = async (data: { two_factor: boolean }) => {
+  try {
+    const response = await axios.post(
+      `${BASE_URL}/accounts/two_factor_setting`,
+      data,
+      {
+        headers: { Authorization: token },
+      }
+    );
+    return response;
+  } catch (error: any) {
+    throw new Error("Some error occured, try again.");
+  }
+};

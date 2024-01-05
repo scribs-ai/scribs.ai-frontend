@@ -7,6 +7,14 @@ const cookies = new Cookies();
 
 const BASE_URL: string = config.base_url;
 
+interface SignInResponse {
+  token: string;
+  exp: string;
+  id: number;
+  email: string;
+  two_factor: boolean;
+}
+
 export const signUpApi = async (props: {
   email: string;
   password: string;
@@ -61,7 +69,7 @@ export const userVerificationApi = async (props: {
 export const signInApi = async (props: {
   email: string;
   password: string;
-}): Promise<string | undefined> => {
+}): Promise<SignInResponse | undefined> => {
   try {
     const signInResponse = await axios.post(`${BASE_URL}/users/sign_in`, {
       user: {
@@ -71,6 +79,13 @@ export const signInApi = async (props: {
     });
 
     if (signInResponse.status === 200) {
+      if (!signInResponse.data.two_factor) {
+        cookies.set("token", signInResponse.data.token, {
+          path: "/",
+          expires: getTime(),
+        });
+        return signInResponse.data;
+      }
       localStorage.setItem("email", props.email);
 
       const otpGenerateResponse = await axios.get(
