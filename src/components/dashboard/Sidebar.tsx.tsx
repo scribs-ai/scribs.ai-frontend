@@ -12,9 +12,12 @@ export function Sidebar({ className }: any) {
             Dashboard
           </h2>
           <div className="space-y-1">
-            <Button variant="ghost" className="w-full justify-start">
-              Workspace selector
-            </Button>
+            <Link
+              href={'/workspace'}
+              className={cn(buttonVariants({ variant: "ghost" }), "w-full justify-start")}
+            >
+              Workspace Management
+            </Link>
             <Button variant="ghost" className="w-full justify-start">
               Recent
             </Button>
@@ -45,7 +48,12 @@ export function Sidebar({ className }: any) {
             <Button variant="ghost" className="w-full justify-start">
               Account settings
             </Button>
-            <Link className={buttonVariants({ variant: "ghost" })} href={'/settings'}>Settings</Link>
+            <Link
+              href={'/settings'}
+              className={cn(buttonVariants({ variant: "ghost" }), "w-full justify-start")}
+            >
+              Settings
+            </Link>
           </div>
         </div>
       </div>
