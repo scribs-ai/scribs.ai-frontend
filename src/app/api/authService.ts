@@ -16,14 +16,18 @@ interface SignInResponse {
 }
 
 export const signUpApi = async (props: {
+  first_name: string;
+  last_name: string;
   email: string;
   password: string;
   confirmPassword: string;
 }): Promise<any> => {
-  const { email, password, confirmPassword } = props;
+  const { first_name, last_name, email, password, confirmPassword } = props;
 
   try {
     const response = await axios.post(`${BASE_URL}/users`, {
+      first_name,
+      last_name,
       email,
       password,
       password_confirmation: confirmPassword,
