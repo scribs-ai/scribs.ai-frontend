@@ -1,12 +1,8 @@
-import axios, { Axios, AxiosResponse } from "axios";
+import axios, { AxiosError, AxiosResponse } from "axios";
 import { config } from "@/config";
+import { Workspace } from "../workspace/page";
 
 const BASE_URL: string = `${config.base_url}`;
-
-interface Workspace {
-  name: string;
-  archived: boolean;
-}
 
 export const getWorkspacesApi = async (): Promise<AxiosResponse> => {
   try {
@@ -18,12 +14,17 @@ export const getWorkspacesApi = async (): Promise<AxiosResponse> => {
 };
 
 export const createWorkspaceApi = async (
-  workspaceData: Workspace
+  workspaceData: Partial<Workspace>
 ): Promise<Workspace> => {
   try {
     const response: AxiosResponse<Workspace> = await axios.post<Workspace>(
       `${BASE_URL}/workspaces`,
-      workspaceData
+      { workspace: { ...workspaceData, archived: false } },
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
     );
     return response.data;
   } catch (error) {
@@ -39,5 +40,30 @@ export const deleteWorkspaceApi = async (id: number): Promise<string> => {
     return response.data.message;
   } catch (error) {
     throw new Error("Failed to delete workspace, please try again!");
+  }
+};
+
+export const updateWorkspaceApi = async (
+  workspaceData: Partial<Workspace>
+): Promise<AxiosResponse<any>> => {
+  try {
+    const response: AxiosResponse<any> = await axios.put(
+      `${BASE_URL}/workspaces/${workspaceData.id}`,
+      { workspace: { ...workspaceData, archived: false } },
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+    return response;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      const axiosError = error as AxiosError;
+      if (axiosError.response?.status === 404) {
+        throw new Error("Workspace not found");
+      }
+    }
+    throw new Error("Some error occurred, try again.");
   }
 };

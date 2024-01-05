@@ -34,7 +34,8 @@ const ProfileForm: React.FC = () => {
   const form = useForm<ProfileFormSchemaType>({
     resolver: zodResolver(profileFormSchema),
     defaultValues: {
-      name: '',
+      first_name: '',
+      last_name: '',
       email: '',
       profile_picture: null,
     }
@@ -43,8 +44,8 @@ const ProfileForm: React.FC = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const { name, email, profile_picture } = await getUserDataApi();
-        form.reset({ name: name ?? "", email, profile_picture: profile_picture ?? "" })
+        const { first_name, last_name, email, profile_picture } = await getUserDataApi();
+        form.reset({ first_name: first_name ?? "", last_name: last_name ?? "", email, profile_picture: profile_picture ?? "" })
         setPreviousPicture(profile_picture)
       } catch (error: any) {
         toast({
@@ -77,7 +78,8 @@ const ProfileForm: React.FC = () => {
   const onSubmit = async (data: ProfileFormSchemaType) => {
     try {
       const formData = new FormData();
-      formData.append('user[name]', data.name);
+      formData.append('user[first_name]', data.first_name);
+      formData.append('user[last_name]', data.last_name);
       formData.append('user[email]', data.email);
       if (data.profile_picture !== null && typeof data.profile_picture !== 'string') {
         formData.append('user[image]', data.profile_picture);
@@ -87,6 +89,10 @@ const ProfileForm: React.FC = () => {
         toast({
           title: 'Profile updated successfully!',
         });
+        const { first_name, last_name, email, profile_picture } = await getUserDataApi();
+        form.reset({ first_name: first_name ?? "", last_name: last_name ?? "", email, profile_picture: profile_picture ?? "" });
+        setPreviousPicture(profile_picture);
+        setPreviewImage(null);
       }
     } catch (error: any) {
       toast({
@@ -100,7 +106,7 @@ const ProfileForm: React.FC = () => {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-7" >
         <Avatar className="w-32 h-32">
           <AvatarImage alt="Profile-image" src={previewImage ? previewImage : getSourceUrl(form.getValues('profile_picture'))} />
-          <AvatarFallback>{form.getValues('name')}</AvatarFallback>
+          <AvatarFallback>{form.getValues('first_name')}</AvatarFallback>
         </Avatar>
         <FormField
           control={form.control}
@@ -131,15 +137,31 @@ const ProfileForm: React.FC = () => {
         />
         <FormField
           control={form.control}
-          name="name"
+          name="first_name"
           render={({ field }) => (
             <FormItem className="space-y-2">
-              <FormLabel>Name</FormLabel>
+              <FormLabel>First Name</FormLabel>
               <FormControl>
-                <Input placeholder="Enter name" {...field} />
+                <Input placeholder="Enter first name" {...field} />
               </FormControl>
               <FormDescription>
-                This is your public display name.
+                This is your public display first name.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="last_name"
+          render={({ field }) => (
+            <FormItem className="space-y-2">
+              <FormLabel>Last Name</FormLabel>
+              <FormControl>
+                <Input placeholder="Enter last name" {...field} />
+              </FormControl>
+              <FormDescription>
+                This is your public display last name.
               </FormDescription>
               <FormMessage />
             </FormItem>

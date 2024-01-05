@@ -44,6 +44,8 @@ const SignUpForm: FC = () => {
     resolver: zodResolver(signUpFormSchema),
     mode: "onChange",
     defaultValues: {
+      first_name: '',
+      last_name: '',
       email: '',
       password: '',
       confirmPassword: '',
@@ -83,7 +85,7 @@ const SignUpForm: FC = () => {
   };
 
   return (
-    <Card className="w-96">
+    <Card className="w-96 mt-24">
       <CardHeader className="space-y-1">
         <CardTitle className="text-2xl">Create an account</CardTitle>
         <CardDescription>
@@ -104,6 +106,34 @@ const SignUpForm: FC = () => {
         </div>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-2">
+            <div className="">
+              <FormField
+                control={form.control}
+                name="first_name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>First Name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="first name" {...field} disabled={isLoading} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="last_name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Last Name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="last name" {...field} disabled={isLoading} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
             <FormField
               control={form.control}
               name="email"

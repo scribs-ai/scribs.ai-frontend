@@ -1,15 +1,18 @@
 "use client"
 import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { createWorkspaceApi, deleteWorkspaceApi, getWorkspacesApi } from '../api/workspaceService';
+import { createWorkspaceApi, deleteWorkspaceApi, getWorkspacesApi, updateWorkspaceApi } from '../api/workspaceService';
 import { toast } from '@/components/ui/use-toast';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Trash2 } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import CreateWorkSpaceForm, { CreateWorkSpaceFormProps } from './CreateWorkspaceForm';
+import WorkspaceCard from './WorkspaceCard';
 
-interface Workspace {
+export interface Workspace {
   id: number;
   name: string;
+  archived: boolean;
+  image_url: any | null;
+  image: any
 }
 
 const WorkspacePage: React.FC = () => {
@@ -30,9 +33,8 @@ const WorkspacePage: React.FC = () => {
     fetchWorkspace();
   }, []);
 
-  const handleWorkspaceAdd: CreateWorkSpaceFormProps['onSubmit'] = async (name) => {
+  const handleWorkspaceAdd = async (data: Partial<Workspace>) => {
     try {
-      const data = { name: name, archived: true };
       const response = await createWorkspaceApi(data);
       if (response) {
         fetchWorkspace();
@@ -61,29 +63,41 @@ const WorkspacePage: React.FC = () => {
     }
   };
 
+  const handleWorkspaceUpdate = async (data: Partial<Workspace>) => {
+    try {
+      const response = await updateWorkspaceApi(data)
+      if (response) {
+        fetchWorkspace()
+        toast({
+          title: "Workspace updated Successfully."
+        })
+      }
+    } catch (error: any) {
+      toast({
+        title: error.message
+      })
+    }
+  }
+
   return (
     <>
       <div className="text-end">
-        <CreateWorkSpaceForm onSubmit={handleWorkspaceAdd} />
+        <CreateWorkSpaceForm onSubmit={handleWorkspaceAdd}>
+          <Button variant="outline" className="hover:bg-blue-200">
+            <Plus />
+            Add New Workspace
+          </Button>
+        </CreateWorkSpaceForm>
       </div>
       <div className="flex flex-wrap justify-start gap-6">
         {workspaces &&
           workspaces.map((data) => (
-            <Card className='w-1/4 p-4 hover:bg-accent' key={data.id}>
-              <CardHeader>
-                <CardTitle className='font-normal break-words'>{data.name}</CardTitle>
-              </CardHeader>
-              <CardFooter>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="border border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
-                  onClick={() => handleWokspaceDelete(data.id)}
-                >
-                  <Trash2 size={20} />
-                </Button>
-              </CardFooter>
-            </Card>
+            <WorkspaceCard
+              key={data.id}
+              data={data}
+              onDelete={handleWokspaceDelete}
+              onUpdate={handleWorkspaceUpdate}
+            />
           ))
         }
       </div>

@@ -2,6 +2,22 @@ import * as z from "zod";
 
 export const signUpFormSchema = z
   .object({
+    first_name: z
+      .string()
+      .min(2, {
+        message: "First name must be at least 2 characters.",
+      })
+      .max(15, {
+        message: "First name must not be longer than 15 characters.",
+      }),
+    last_name: z
+      .string()
+      .min(2, {
+        message: "Last name must be at least 2 characters.",
+      })
+      .max(15, {
+        message: "Last name must not be longer than 15 characters.",
+      }),
     email: z.string().email("Invalid email format."),
     password: z
       .string()
@@ -84,13 +100,21 @@ export const profileFormSchema = z.object({
   profile_picture: z
     .any()
     .refine((file) => file?.length !== 0, "File is required"),
-  name: z
+  first_name: z
     .string()
     .min(2, {
-      message: "Name must be at least 2 characters.",
+      message: "First name must be at least 2 characters.",
     })
-    .max(30, {
-      message: "Name must not be longer than 30 characters.",
+    .max(15, {
+      message: "First name must not be longer than 15 characters.",
+    }),
+  last_name: z
+    .string()
+    .min(2, {
+      message: "Last name must be at least 2 characters.",
+    })
+    .max(15, {
+      message: "Last name must not be longer than 15 characters.",
     }),
   email: z
     .string({
