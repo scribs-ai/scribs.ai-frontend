@@ -130,3 +130,23 @@ export const updateTeamMemberApi = async (
     throw new Error("Unable to update member.");
   }
 };
+
+export const uploadWorkspaceFileApi = async (
+  workspace_id: number,
+  file: File | null
+): Promise<AxiosResponse> => {
+  try {
+    const response = await axios.post(
+      `${BASE_URL}/workspaces/${workspace_id}/upload_workspace_data_s3`,
+      { workspace: { image: file } },
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+    return response;
+  } catch (error) {
+    throw new Error("Unable to upload file, try again.");
+  }
+};
