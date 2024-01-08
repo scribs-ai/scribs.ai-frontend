@@ -19,6 +19,7 @@
     "@radix-ui/react-slot": "^1.0.2",
     "@radix-ui/react-switch": "^1.0.3",
     "@radix-ui/react-toast": "^1.1.5",
+    "@rails/actioncable": "^7.1.2",
     "@react-oauth/google": "^0.12.1",
     "@stripe/react-stripe-js": "^2.4.0",
     "@stripe/stripe-js": "^2.2.2",
@@ -44,6 +45,7 @@
   "devDependencies": {
     "@types/json2csv": "^5.0.7",
     "@types/node": "^20",
+    "@types/rails__actioncable": "^6.1.10",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "autoprefixer": "^10.0.1",
