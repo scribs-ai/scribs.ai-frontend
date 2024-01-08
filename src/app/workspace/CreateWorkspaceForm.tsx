@@ -24,6 +24,7 @@ const CreateWorkSpaceForm: React.FC<CreateWorkSpaceFormProps> = ({ onSubmit, wor
   const [editedName, setEditedName] = useState<string>("");
   const [imageFile, setImageFile] = useState<File | null>(null)
   const isEditedMode = !!workspaceData;
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     if (workspaceData) { setEditedName(workspaceData.name) }
@@ -36,20 +37,22 @@ const CreateWorkSpaceForm: React.FC<CreateWorkSpaceFormProps> = ({ onSubmit, wor
     }
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const name = formData.get("name") as string;
 
     if (isEditedMode) {
       const updatedWorkspace: Workspace = { ...workspaceData!, name, image: imageFile };
-      onSubmit(updatedWorkspace);
+      await onSubmit(updatedWorkspace);
     } else {
-      onSubmit({ name, image: imageFile });
+      await onSubmit({ name, image: imageFile });
     }
+    setOpen(false)
+
   };
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         {children}
       </DialogTrigger>

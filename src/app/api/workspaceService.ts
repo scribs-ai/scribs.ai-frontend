@@ -1,6 +1,7 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { config } from "@/config";
 import { Workspace } from "../workspace/page";
+import { Member } from "../workspace/[workspace_id]/MemberTable";
 
 const BASE_URL: string = `${config.base_url}`;
 
@@ -65,5 +66,67 @@ export const updateWorkspaceApi = async (
       }
     }
     throw new Error("Some error occurred, try again.");
+  }
+};
+
+export const getTeamMembers = async (workspace_id: number) => {
+  try {
+    const response = axios.get(
+      `${BASE_URL}/workspaces/${workspace_id}/team_members`
+    );
+    return response;
+  } catch (error) {
+    throw new Error("Unable to fetch data");
+  }
+};
+
+export const addTeamMember = async (
+  workspace_id: number,
+  name: string,
+  role: string
+) => {
+  try {
+    const response = axios.post(
+      `${BASE_URL}/workspaces/${workspace_id}/team_members`,
+      {
+        team_member: {
+          name,
+          role,
+        },
+      }
+    );
+    return response;
+  } catch (error) {
+    throw new Error("unable to add member");
+  }
+};
+
+export const deleteTeamMember = async (
+  workspace_id: number,
+  memberId: number | undefined
+) => {
+  try {
+    const response = await axios.delete(
+      `${BASE_URL}/workspaces/${workspace_id}/team_members/${memberId}`
+    );
+    return response;
+  } catch (error) {
+    throw new Error("Unable to remove member.");
+  }
+};
+
+export const updateTeamMemberApi = async (
+  workspace_id: number,
+  memberData: Member
+) => {
+  try {
+    const { id, name, role } = memberData;
+    const response = await axios.put(
+      `${BASE_URL}/workspaces/${workspace_id}/team_members/${id}`,
+      { team_member: { name: name, role: role } }
+    );
+    return response;
+  } catch (error) {
+    throw new Error("Unable to update member.");
   }
 };

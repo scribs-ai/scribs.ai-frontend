@@ -6,6 +6,7 @@ import CreateWorkSpaceForm from './CreateWorkspaceForm';
 import { Workspace } from './page';
 import Image from 'next/image';
 import { getSourceUrl } from '@/lib/utils';
+import Link from 'next/link';
 
 interface WorkspaceCardProps {
   data: Workspace;
@@ -17,7 +18,11 @@ const WorkspaceCard: React.FC<WorkspaceCardProps> = ({ data, onDelete, onUpdate 
   return (
     <Card className='w-1/4 p-4 hover:bg-accent'>
       <CardHeader>
-        <CardTitle className='font-normal break-words'>{data.name}</CardTitle>
+        <CardTitle className='font-normal break-words'>
+          <Link href={`workspace/${data.id}`}>
+            {data.name}
+          </Link>
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <Image
@@ -48,7 +53,7 @@ const WorkspaceCard: React.FC<WorkspaceCardProps> = ({ data, onDelete, onUpdate 
           </Button>
         </CreateWorkSpaceForm>
       </CardFooter>
-    </Card>
+    </Card >
   );
 };
 
