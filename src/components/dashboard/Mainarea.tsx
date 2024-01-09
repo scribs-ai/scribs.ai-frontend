@@ -10,13 +10,19 @@ export interface NotificationData {
 }
 
 const Mainarea = () => {
-  const [notifications, setNotifications] = useState<NotificationData | null>(null);
+  const [newNotification, setNewNotification] = useState<NotificationData | null>(null)
+  const [notifications, setNotifications] = useState<NotificationData[] | null>(null);
   return (
     <div className='flex justify-between'>
       <h1>Main area</h1>
-      <NotificationPopUp notifications={notifications} setNotifications={setNotifications}>
+      <NotificationPopUp
+        newNotification={newNotification}
+        setNewNotification={setNewNotification}
+        notifications={notifications}
+        setNotifications={setNotifications}
+      >
         <Button variant='link'>
-          {notifications ? <BellDot color='red' /> : <Bell />}
+          {newNotification ? <BellDot color='red' /> : <Bell />}
         </Button>
       </NotificationPopUp>
     </div >

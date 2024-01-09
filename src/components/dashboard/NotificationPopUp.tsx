@@ -1,4 +1,3 @@
-'use client'
 import React, { useState, useEffect, useContext } from 'react';
 import {
   Dialog,
@@ -11,18 +10,17 @@ import {
 import { ActionCableContext } from './context/ActionCableProvider';
 import { NotificationData } from './Mainarea';
 
-
-
 interface NotificationPopUpProps {
   children: React.ReactElement;
-  notifications: any
-  setNotifications: any
+  newNotification: NotificationData | null;
+  setNewNotification: React.Dispatch<React.SetStateAction<NotificationData | null>>;
+  notifications: NotificationData[] | null;
+  setNotifications: React.Dispatch<React.SetStateAction<NotificationData[] | null>>;
 }
 
-const NotificationPopUp: React.FC<NotificationPopUpProps> = ({ children, notifications, setNotifications }) => {
+const NotificationPopUp: React.FC<NotificationPopUpProps> = ({ children, newNotification, setNewNotification, notifications, setNotifications }) => {
   const cable = useContext(ActionCableContext);
   const [channel, setChannel] = useState<any>(null);
-
 
   useEffect(() => {
     if (!channel && cable) {
@@ -32,20 +30,25 @@ const NotificationPopUp: React.FC<NotificationPopUpProps> = ({ children, notific
         },
         {
           received: (data: NotificationData) => {
-            setNotifications(data);
+            setNewNotification(data)
+            setNotifications((prevNotifications) => {
+              if (prevNotifications) {
+                return [...prevNotifications, data];
+              }
+              return [data];
+            });
           },
         }
       );
       setChannel(chnl);
     }
 
-
     return () => {
       if (channel) {
         channel.unsubscribe();
       }
     };
-  }, [cable, channel, setNotifications]);
+  }, [cable, channel, setNotifications, setNewNotification]);
 
   return (
     <Dialog>
@@ -55,12 +58,13 @@ const NotificationPopUp: React.FC<NotificationPopUpProps> = ({ children, notific
           <DialogTitle>Notifications</DialogTitle>
           <DialogDescription>All the notifications are shown below.</DialogDescription>
         </DialogHeader>
-
-        {notifications && (
-          <ul>
-            <strong>{notifications.title}</strong>: {notifications.content}
-          </ul>
-        )}
+        <ul>
+          {notifications && notifications.map((notification, index) => (
+            <li key={index} className='hover:bg-gray-100 p-4 border-b-2 text-sm'>
+              <strong>{notification.title}</strong>: {notification.content}
+            </li>
+          ))}
+        </ul>
       </DialogContent>
     </Dialog>
   );

@@ -1,51 +1,48 @@
-"use client"
-
-import { useForm } from "react-hook-form"
-import { FC, useState } from "react";
-
+'use client'
+import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
+import Link from 'next/link';
+import { Form, FormField, FormControl, FormItem, FormMessage } from '@/components/ui/form';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Icons } from '@/components/ui/icons';
+import { toast } from '../ui/use-toast';
+import { Eye, EyeOff, Lock, Mail } from 'lucide-react';
+import { signInFormSchema } from '@/lib/schemas';
+import { signInApi } from '@/app/api/authService';
+import { useRouter } from 'next/navigation';
 
-import Link from "next/link"
-import { useRouter } from "next/navigation";
+interface SocialConnectProps {
+  icon: JSX.Element;
+  text: string;
+}
 
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form"
-import {
-  Card, CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "../ui/card"
-import { Icons } from "../ui/icons"
-import { Input } from "../ui/input"
-import { Button } from "../ui/button"
-import { toast } from "../ui/use-toast";
+const SocialConnect: React.FC<SocialConnectProps> = ({ icon, text }) => {
+  return (
+    <div className='flex items-center justify-start'>
+      {icon}
+      <Button variant='link' className='text-sm'>
+        {text}
+      </Button>
+    </div>
+  );
+};
 
-import { signInApi } from "@/app/api/authService";
-import GoogleAuthButton from "../GoogleAuthButton";
-import { signInFormSchema } from "@/lib/schemas";
-
-const SignInForm: FC = () => {
-  const [isLoading, setIsLoading] = useState<boolean>(false)
-  const router = useRouter()
+const SignInForm: React.FC = () => {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [showPassword, setShowPassword] = useState<boolean>(false)
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof signInFormSchema>>({
     resolver: zodResolver(signInFormSchema),
-    mode: "onChange",
+    mode: 'onChange',
     defaultValues: {
       email: '',
       password: '',
-    }
-  })
+    },
+  });
 
   const onSubmit = async (data: z.infer<typeof signInFormSchema>) => {
     try {
@@ -56,7 +53,7 @@ const SignInForm: FC = () => {
       if (response) {
         if (!response.two_factor) {
           toast({
-            title: 'Logged In successfully. Welcome.'
+            title: 'Logged In successfully. Welcome.',
           });
           setIsLoading(false);
           router.replace('/dashboard');
@@ -75,80 +72,86 @@ const SignInForm: FC = () => {
       toast({
         title: 'An error occurred during sign-in.',
         description: error.message || 'Unknown error',
-
       });
     }
     setIsLoading(false);
   };
 
   return (
-    <Card className="w-96">
-      <CardHeader className="space-y-1">
-        <CardTitle className="text-2xl">Welcome, Login</CardTitle>
-        <CardDescription>
-          Enter your credentials below to login
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="grid gap-4">
-        <GoogleAuthButton />
-        <div className="relative">
-          <div className="absolute inset-0 flex items-center">
-            <span className="w-full border-t" />
-          </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-background px-2 text-muted-foreground">
-              Or continue with
-            </span>
-          </div>
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)}>
+        <FormField
+          control={form.control}
+          name='email'
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <div className='flex items-center mb-4 md:border-b border-slate-500'>
+                  <Mail color='#a9a9a9' />
+                  <Input
+                    className='flex-1 border-0'
+                    placeholder='Email or Phone'
+                    autoComplete='username'
+                    {...field}
+                    disabled={isLoading}
+                  />
+                </div>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name='password'
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <div className='flex items-center md:border-b border-slate-500 mb-1'>
+                  <Lock color='#a9a9a9' />
+                  <Input
+                    className='flex-1 border-0'
+                    placeholder='Password'
+                    type={!showPassword ? 'password' : 'text'}
+                    autoComplete='current-password'
+                    {...field}
+                    disabled={isLoading}
+                  />
+                  {!showPassword ?
+                    <Eye color='#a9a9a9' onClick={() => setShowPassword(!showPassword)} />
+                    :
+                    <EyeOff color='#a9a9a9' onClick={() => setShowPassword(!showPassword)} />}
+                </div>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <div className='mb-7 flex justify-end'>
+          <Link href='forgot-password' className='text-sm text-gray-500 border-b border-gray-500'>
+            Forgot Password
+          </Link>
         </div>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-2">
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input placeholder="mail@example.com" autoComplete="username" {...field} disabled={isLoading} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter your password" type="password" autoComplete="current-password" {...field} disabled={isLoading} />
-                  </FormControl>
-                  <FormMessage />
-                  <FormDescription>
-                    <Link className="text-blue-500 hover:underline" href={'/forgot-password'}>forgot password?</Link>
-                  </FormDescription>
-                </FormItem>
-              )}
-            />
-            <Button id="submit" className="w-full mt-6" type="submit" disabled={isLoading}>
-              {isLoading && (
-                <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-              )}
-              Sign in
-            </Button>
-          </form>
-        </Form>
-      </CardContent>
-      <CardFooter>
-        <p className='text-center text-sm text-gray-600 mt-1'>
-          If you don&apos;t have an account, please.{" "}
-          <Link className="text-blue-500 hover:underline" href={'/sign-up'}>Sign up</Link>
-        </p>
-      </CardFooter>
-    </Card>
-  )
-}
+        <div className='flex flex-col items-center space-y-3 mb-6'>
+          <Button
+            id='submit'
+            type='submit'
+            disabled={isLoading}
+            className='w-full md:w-1/2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'>
+            {isLoading && <Icons.spinner className='mr-2 h-4 w-4 animate-spin' />}
+            LOGIN
+          </Button>
+          <Link href='sign-up' className='text-sm text-gray-500 border-b border-gray-500'>
+            Create an Account
+          </Link>
+        </div>
+      </form>
+      <div className='pl-24'>
+        <SocialConnect icon={<Icons.facebook className='size-6' />} text='Connect Facebook Account' />
+        <SocialConnect icon={<Icons.google className='size-6' />} text='Connect Google Account' />
+      </div>
+    </Form>
+  );
+};
 
 export default SignInForm;
