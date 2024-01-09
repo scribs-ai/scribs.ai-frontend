@@ -114,7 +114,7 @@ const SignUpForm: FC = () => {
                   <FormItem>
                     <FormLabel>First Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="first name" {...field} disabled={isLoading} />
+                      <Input placeholder="Enter first name" {...field} disabled={isLoading} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -127,7 +127,7 @@ const SignUpForm: FC = () => {
                   <FormItem>
                     <FormLabel>Last Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="last name" {...field} disabled={isLoading} />
+                      <Input placeholder="Enter last name" {...field} disabled={isLoading} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -174,7 +174,7 @@ const SignUpForm: FC = () => {
                 </FormItem>
               )}
             />
-            <Button className="w-full mt-6" type="submit" disabled={isLoading}>
+            <Button id="submit" className="w-full mt-6" type="submit" disabled={isLoading}>
               {isLoading && (
                 <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
               )}

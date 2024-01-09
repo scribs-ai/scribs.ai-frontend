@@ -132,7 +132,7 @@ const SignInForm: FC = () => {
                 </FormItem>
               )}
             />
-            <Button className="w-full mt-6" type="submit" disabled={isLoading}>
+            <Button id="submit" className="w-full mt-6" type="submit" disabled={isLoading}>
               {isLoading && (
                 <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
               )}
