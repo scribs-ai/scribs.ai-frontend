@@ -1,7 +1,6 @@
 import React from 'react'
 
 import SignInForm from '@/components/auth-forms/SignInForm'
-import SignInPage from './SignInPage'
 
 const page = () => {
   return (
